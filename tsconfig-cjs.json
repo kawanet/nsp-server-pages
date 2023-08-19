@@ -5,10 +5,8 @@
     "tmp/"
   ],
   "include": [
-    "index.ts",
     "src/",
-    "test/",
-    "types/nsp-server-pages.d.ts"
+    "test/"
   ],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,

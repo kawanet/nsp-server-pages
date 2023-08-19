@@ -4,6 +4,8 @@
  * @see https://github.com/kawanet/nsp-server-pages
  */
 
+export const createNSP: (options?: NSP.Options) => NSP.App;
+
 declare namespace NSP {
     type NodeFn<T> = (context?: T) => string | Promise<string>;
 

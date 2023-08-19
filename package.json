@@ -20,17 +20,18 @@
   "exports": {
     "import": {
       "default": "./index.js",
-      "types": "./types/nsp-server-pages.d.ts"
+      "types": "./index.d.ts"
     },
     "require": "./cjs/index.js"
   },
   "files": [
+    "cjs/index.js",
     "cjs/package.json",
     "cjs/src/*.js",
-    "cjs/index.js",
-    "src/*.js",
+    "index.d.ts",
     "index.js",
-    "types/*.d.ts"
+    "package.json",
+    "src/*.js"
   ],
   "homepage": "https://github.com/kawanet/nsp-server-pages#readme",
   "keywords": [
@@ -53,5 +54,5 @@
   },
   "sideEffects": false,
   "type": "module",
-  "types": "./types/nsp-server-pages.d.ts"
+  "types": "./index.d.ts"
 }
