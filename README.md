@@ -55,10 +55,11 @@ nsp.addTagLib({
     tag: {
         loop: (tag) => {
             return (ctx) => {
-                return ctx.items.map(item => {
+                const children = ctx.items.map(item => {
                     ctx.item = item;
                     return tag.body(ctx);
-                }).join("");
+                });
+                return nsp.concat(children);
             };
         }
     }

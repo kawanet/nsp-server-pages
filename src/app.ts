@@ -40,7 +40,7 @@ class App implements NSP.App {
         logger.log(message);
     }
 
-    concat(..._: (string | Promise<string>)[]): string | Promise<string> {
+    concat(..._: NSP.TextFlex[]): string | Promise<string> {
         return concat(arguments);
     }
 

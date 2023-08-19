@@ -15,6 +15,8 @@ declare namespace NSP {
 
     type LoaderFn = (path: string) => Promise<NSP.NodeFn<any>>;
 
+    type TextFlex = string | Promise<string> | (string | Promise<string>)[];
+
     interface TagDef<A, T = any> {
         app: NSP.App;
         conf: any;
@@ -77,7 +79,7 @@ declare namespace NSP {
 
         bundle<T>(...node: Node<T>[]): NodeFn<T>;
 
-        concat(...text: (string | Promise<string>)[]): string | Promise<string>;
+        concat(...text: TextFlex[]): string | Promise<string>;
 
         emit<T>(type: "error", e: Error, context?: T): string;
 

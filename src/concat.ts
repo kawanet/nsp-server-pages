@@ -2,12 +2,14 @@ const isPromise = <T>(v: any): v is Promise<T> => v && (typeof v.then === "funct
 
 const join = (a: string, b: string): string => (a == null ? b : (b == null ? a : a + b));
 
-export const concat = (array: ArrayLike<string | Promise<string>>): string | Promise<string> => {
+const single = (v: NSP.TextFlex): string | Promise<string> => (Array.isArray(v) ? concat(v) : v);
+
+export const concat = (array: ArrayLike<NSP.TextFlex>): string | Promise<string> => {
     let result: string;
     let promise: Promise<string>;
 
     for (let i = 0; i < array.length; i++) {
-        let text: string | Promise<string> = array[i];
+        let text: string | Promise<string> = single(array[i]);
 
         if (promise) {
             promise = promise.then(result => {
