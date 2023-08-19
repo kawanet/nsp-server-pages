@@ -27,10 +27,27 @@ render(context)
 // => <span>hello, world</span>
 ```
 
-## TAGLIB
+## TRANSPILE
+
+JSP template is transpiled to JavaScript template literal, etc.
 
 ```js
-const {createNSP} = require("./");
+const nsp = createNSP();
+
+const src = nsp.parse('<span>hello, ${name}</span>').toJS();
+// => nsp.bundle(v => `<span>hello, ${v.name}</span>`)
+
+const render = nsp.bundle(v => `<span>hello, ${v.name}</span>`);
+
+render({name: "nsp"});
+// => <span>hello, nsp</span>
+```
+
+## TAGLIB
+
+Custom tag `<tag:loop/>` could be defined with a simple function as below:
+
+```js
 const nsp = createNSP();
 
 nsp.addTagLib({
@@ -62,8 +79,9 @@ render(context);
 
 ## FUNCTION
 
+Custom function `${f:uppper(text)}` is much simple as well:
+
 ```js
-const {createNSP} = require("./");
 const nsp = createNSP();
 
 nsp.addTagLib({
@@ -83,9 +101,9 @@ render(context);
 
 ## WEB SERVER
 
-```js
-import {createNSP} from "nsp-server-pages";
+Launch web server with Express.js:
 
+```js
 const nsp = createNSP();
 
 // .jsp files compiled on demand
@@ -99,7 +117,7 @@ nsp.mount("/cached/", (path) => nsp.loadJS(`${BASE}/cached/${path}`));
 
 const app = express();
 app.use("/", async (req, res, next) => {
-    const context = {indexDto: {codename: "NSP"}};
+    const context = {indexDto: {name: req.query.name || "nsp"}};
     const render = await nsp.load(req.path);
     const html = render(context);
     res.type("html").send(html);
