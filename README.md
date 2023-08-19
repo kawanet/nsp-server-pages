@@ -1,16 +1,17 @@
 # nsp-server-pages
 
-NSP JavaScript Server Pages for Node.js
-
 [![Node.js CI](https://github.com/kawanet/nsp-server-pages/workflows/Node.js%20CI/badge.svg?branch=main)](https://github.com/kawanet/nsp-server-pages/actions/)
 [![npm version](https://img.shields.io/npm/v/nsp-server-pages)](https://www.npmjs.com/package/nsp-server-pages)
 
+NSP JavaScript Server Pages for Node.js
+
 - `nsp.parse("...").toFn()` - compile JSP template to JavaScript function
 - `nsp.parse("...").toJS()` - transpile JSP template to JavaScript source code
-- `${ expression.language }` - basic expression language work mostly
-- `${ f:h("tag") }` - tag function call
-- `<ns:tag attr="${ expression }"/>` - custom tag library
-- See TypeScript declaration [index.d.ts](https://github.com/kawanet/nsp-server-pages/blob/main/index.d.ts) for detail.
+- `${ expression.language }` - basic expression language mostly works as is
+- `${ f:h("tag") }` - custom taglib static function call
+- `<ns:tag attr="${ expression }"/>` - custom taglib action tag
+- `<%-- comments --%>` - comments in JSP just ignored
+- See TypeScript declaration [index.d.ts](https://github.com/kawanet/nsp-server-pages/blob/main/index.d.ts) for API detail.
 
 ## SYNOPSIS
 
@@ -29,7 +30,7 @@ render(context)
 
 ## TRANSPILE
 
-JSP template is transpiled to JavaScript template literal, etc.
+JSP template document is transpiled to JavaScript template literal, etc.
 
 ```js
 const nsp = createNSP();
@@ -43,6 +44,8 @@ render({name: "nsp"});
 // => <span>hello, nsp</span>
 ```
 
+- `nsp.bundle(fn)` method returns a single function which accepts a context and returns a `string` or `Promise<string>` then.
+
 ## TAGLIB
 
 Custom tag `<tag:loop/>` could be defined with a simple function as below:
@@ -55,7 +58,7 @@ nsp.addTagLib({
     tag: {
         loop: (tag) => {
             return (ctx) => {
-                const children = ctx.items.map(item => {
+                const children = ctx.items.map((item) => {
                     ctx.item = item;
                     return tag.body(ctx);
                 });
@@ -78,6 +81,10 @@ render(context);
 // => <select><option value="1">One</option><option value="2">Two</option></select>
 ```
 
+- `tag.body(ctx)` returns a `string` or `Promise<string>` with given context.
+- `nsp.concat(array)` utility method works like `Array#join()` but allows `Promise<string>` items.
+- This means that async tags `async (ctx) => {...}` are allowed as well as sync tags.
+
 ## FUNCTION
 
 Custom function `${f:uppper(text)}` is much simple as well:
@@ -89,6 +96,7 @@ nsp.addTagLib({
     ns: "f",
     fn: {
         upper: (text) => text?.toUpperCase(),
+        lower: (text) => text?.toLowerCase(),
     }
 });
 
