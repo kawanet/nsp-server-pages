@@ -1,0 +1,29 @@
+{
+  "exclude": [
+    "cjs/",
+    "node_modules",
+    "tmp/"
+  ],
+  "include": [
+    "index.ts",
+    "src/",
+    "test/",
+    "types/nsp-server-pages.d.ts"
+  ],
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "module": "commonjs",
+    "moduleResolution": "nodenext",
+    "noImplicitAny": true,
+    "noImplicitReturns": false,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "outDir": "cjs/",
+    "removeComments": false,
+    "resolvePackageJsonExports": false,
+    "skipLibCheck": false,
+    "strictNullChecks": false,
+    "target": "ES2021"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "name": "nsp-server-pages",
+  "description": "NSP JavaScript Server Pages for Node.js",
+  "version": "0.0.1",
+  "author": "@kawanet",
+  "bugs": {
+    "url": "https://github.com/kawanet/nsp-server-pages/issues"
+  },
+  "dependencies": {
+    "async-cache-queue": "^0.2.6",
+    "to-xml": "^0.1.10"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.5.1",
+    "mocha": "^10.2.0",
+    "typescript": "^5.1.6"
+  },
+  "exports": {
+    "import": {
+      "default": "./index.js",
+      "types": "./types/nsp-server-pages.d.ts"
+    },
+    "require": "./cjs/index.js"
+  },
+  "homepage": "https://github.com/kawanet/nsp-server-pages#readme",
+  "keywords": [
+    "JSP",
+    "Struts",
+    "Tomcat",
+    "taglib"
+  ],
+  "license": "Apache-2.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kawanet/nsp-server-pages.git"
+  },
+  "scripts": {
+    "build": "tsc -p .",
+    "build-cjs": "make clean all",
+    "fixpack": "fixpack",
+    "prepack": "npm run build-cjs && npm run test-cjs && npm run build && npm test",
+    "test": "mocha test",
+    "test-cjs": "make test"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "types": "./types/nsp-server-pages.d.ts"
+}
