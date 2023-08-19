@@ -1,6 +1,8 @@
 import {queueFactory} from "async-cache-queue";
 import {promises as fs} from "fs";
 
+import type {NSP} from "../index.js"
+
 const getName = (path: string) => path.split("/").at(-1)?.split(".").at(0) || "";
 
 abstract class BaseLoader {

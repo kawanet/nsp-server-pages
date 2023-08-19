@@ -1,3 +1,5 @@
+import type {NSP} from "../index.js"
+
 import {parseText} from "./parse-text.js";
 import {parseAttr} from "./parse-attr.js";
 import {parseScriptlet} from "./parse-scriptlet.js";

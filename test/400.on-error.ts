@@ -1,5 +1,5 @@
 import {strict as assert} from "assert";
-import {createNSP} from "../index.js";
+import {createNSP, NSP} from "../index.js";
 
 const TITLE = "400.on-error.ts";
 

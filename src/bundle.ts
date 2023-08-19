@@ -1,3 +1,5 @@
+import type {NSP} from "../index.js"
+
 const isPromise = (v: any): v is Promise<any> => v && (typeof v.then === "function");
 
 const join = (a: string, b: string): string => (a == null ? b : (b == null ? a : a + b));

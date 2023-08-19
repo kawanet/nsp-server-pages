@@ -1,3 +1,5 @@
+import type {NSP} from "../index.js"
+
 import {load, mount} from "./mount.js";
 import {FileLoader, JsLoader, JspLoader} from "./loaders.js";
 import {parseJSP} from "./parse-jsp.js";

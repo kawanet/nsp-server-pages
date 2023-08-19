@@ -1,5 +1,7 @@
 import {toXML} from "to-xml";
 
+import type {NSP} from "../index.js"
+
 export const addTagLib = (app: NSP.App, tagLibDef: NSP.TagLibDef): void => {
     const {fnMap, tagMap} = app;
     const {ns, fn, tag} = tagLibDef;
