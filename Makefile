@@ -1,10 +1,10 @@
 #!/usr/bin/env bash -c make
 
-all: ./src/nsp-app.js ./cjs/src/nsp-app.js
+all: ./src/app.js ./cjs/src/app.js
 
-test: test-title mocha test-cjs
+test: test-title test-esm test-cjs
 
-mocha: ./test/000.before.js
+test-esm: ./test/000.before.js
 	./node_modules/.bin/mocha test/*.js
 
 test-cjs: ./cjs/test/000.before.js

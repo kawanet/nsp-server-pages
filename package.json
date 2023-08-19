@@ -24,6 +24,14 @@
     },
     "require": "./cjs/index.js"
   },
+  "files": [
+    "cjs/package.json",
+    "cjs/src/*.js",
+    "cjs/index.js",
+    "src/*.js",
+    "index.js",
+    "types/*.d.ts"
+  ],
   "homepage": "https://github.com/kawanet/nsp-server-pages#readme",
   "keywords": [
     "JSP",
@@ -38,12 +46,10 @@
     "url": "git+https://github.com/kawanet/nsp-server-pages.git"
   },
   "scripts": {
-    "build": "tsc -p .",
-    "build-cjs": "make clean all",
+    "build": "make all",
     "fixpack": "fixpack",
-    "prepack": "npm run build-cjs && npm run test-cjs && npm run build && npm test",
-    "test": "mocha test",
-    "test-cjs": "make test"
+    "prepack": "make clean test-title all test",
+    "test": "make test"
   },
   "sideEffects": false,
   "type": "module",
