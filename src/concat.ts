@@ -1,12 +1,8 @@
-/**
- * nsp-concat.ts
- */
-
 const isPromise = <T>(v: any): v is Promise<T> => v && (typeof v.then === "function");
 
-const concat = (a: string, b: string): string => (a == null ? b : (b == null ? a : a + b));
+const join = (a: string, b: string): string => (a == null ? b : (b == null ? a : a + b));
 
-export const nspConcat = (array: ArrayLike<string | Promise<string>>): string | Promise<string> => {
+export const concat = (array: ArrayLike<string | Promise<string>>): string | Promise<string> => {
     let result: string;
     let promise: Promise<string>;
 
@@ -16,18 +12,18 @@ export const nspConcat = (array: ArrayLike<string | Promise<string>>): string | 
         if (promise) {
             promise = promise.then(result => {
                 if (isPromise<string>(text)) {
-                    return text.then(text => concat(result, text));
+                    return text.then(text => join(result, text));
                 } else {
-                    return concat(result, text);
+                    return join(result, text);
                 }
             });
         } else {
             if (isPromise<string>(text)) {
                 // upgrade to async mode
-                promise = text.then(text => concat(result, text));
+                promise = text.then(text => join(result, text));
             } else {
                 // sync mode per default
-                result = concat(result, text);
+                result = join(result, text);
             }
         }
     }

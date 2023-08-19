@@ -4,7 +4,7 @@ const isPromise = <T>(v: any): v is Promise<T> => v && (typeof v.catch === "func
 
 const escapeError = (e: Error): string => toXML({"#": (e?.message || String(e))});
 
-export const nspCatch = <T>(app: NSP.App, fn: NSP.NodeFn<T>): NSP.NodeFn<T> => {
+export const catchFn = <T>(app: NSP.App, fn: NSP.NodeFn<T>): NSP.NodeFn<T> => {
     return context => {
         try {
             const result = fn(context);

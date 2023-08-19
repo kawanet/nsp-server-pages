@@ -1,6 +1,6 @@
 import {toXML} from "to-xml";
 
-export const nspAddTagLib = (app: NSP.App, tagLibDef: NSP.TagLibDef): void => {
+export const addTagLib = (app: NSP.App, tagLibDef: NSP.TagLibDef): void => {
     const {fnMap, tagMap} = app;
     const {ns, fn, tag} = tagLibDef;
 
@@ -17,7 +17,7 @@ export const nspAddTagLib = (app: NSP.App, tagLibDef: NSP.TagLibDef): void => {
     }
 }
 
-export const nspTag = <A, T = any>(app: NSP.App, name: string, attr: A | NSP.AttrFn<A, T>, body: NSP.NodeFn<T>): NSP.NodeFn<T> => {
+export const prepareTag = <A, T = any>(app: NSP.App, name: string, attr: A | NSP.AttrFn<A, T>, body: NSP.NodeFn<T>): NSP.NodeFn<T> => {
     const {tagMap, options} = app;
 
     const tagFn: NSP.TagFn<A, T> = tagMap.get(name) || defaultTagFn;

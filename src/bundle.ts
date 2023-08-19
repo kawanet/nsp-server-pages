@@ -1,12 +1,8 @@
-/**
- * nsp-node.ts
- */
-
 const isPromise = (v: any): v is Promise<any> => v && (typeof v.then === "function");
 
-const concat = (a: string, b: string): string => (a == null ? b : (b == null ? a : a + b));
+const join = (a: string, b: string): string => (a == null ? b : (b == null ? a : a + b));
 
-export const nspBundle = <T>(array: ArrayLike<NSP.Node<T>>, start?: number, end?: number): NSP.NodeFn<T> => {
+export const bundle = <T>(array: ArrayLike<NSP.Node<T>>, start?: number, end?: number): NSP.NodeFn<T> => {
     start = +start || 0;
     end = +end || array?.length || 0;
 
@@ -33,9 +29,9 @@ export const nspBundle = <T>(array: ArrayLike<NSP.Node<T>>, start?: number, end?
                     }
 
                     if (isPromise(v)) {
-                        return v.then(v => concat(result, v));
+                        return v.then(v => join(result, v));
                     } else {
-                        return concat(result, v);
+                        return join(result, v);
                     }
                 });
             } else {
@@ -45,10 +41,10 @@ export const nspBundle = <T>(array: ArrayLike<NSP.Node<T>>, start?: number, end?
 
                 if (isPromise(v)) {
                     // upgrade to async mode
-                    promise = v.then(v => concat(result, v));
+                    promise = v.then(v => join(result, v));
                 } else {
                     // sync mode per default
-                    result = concat(result, v);
+                    result = join(result, v);
                 }
             }
         }

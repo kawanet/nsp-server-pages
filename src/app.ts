@@ -1,10 +1,10 @@
 import {load, mount} from "./mount.js";
 import {FileLoader, JsLoader, JspLoader} from "./loaders.js";
 import {parseJSP} from "./parse-jsp.js";
-import {nspCatch} from "./nsp-catch.js";
-import {nspBundle} from "./nsp-bundle.js";
-import {nspAddTagLib, nspTag} from "./taglib.js";
-import {nspConcat} from "./nsp-concat.js";
+import {catchFn} from "./catch.js";
+import {bundle} from "./bundle.js";
+import {addTagLib, prepareTag} from "./taglib.js";
+import {concat} from "./concat.js";
 
 export const createNSP = (options?: NSP.Options): NSP.App => new App(options);
 
@@ -41,7 +41,7 @@ class App implements NSP.App {
     }
 
     concat(..._: (string | Promise<string>)[]): string | Promise<string> {
-        return nspConcat(arguments);
+        return concat(arguments);
     }
 
     fn(name: string): (...args: any[]) => any {
@@ -51,18 +51,18 @@ class App implements NSP.App {
     }
 
     addTagLib(tagLibDef: NSP.TagLibDef): void {
-        nspAddTagLib(this, tagLibDef);
+        addTagLib(this, tagLibDef);
     }
 
     tag<A, T = any>(name: string, attr?: A | NSP.AttrFn<A, T>, ..._: NSP.Node<T>[]): NSP.NodeFn<T> {
-        const bodyFn = nspBundle(arguments, 2);
-        const tagFn = nspTag(this, name, attr, bodyFn);
-        return nspCatch(this, tagFn);
+        const bodyFn = bundle(arguments, 2);
+        const tagFn = prepareTag(this, name, attr, bodyFn);
+        return catchFn(this, tagFn);
     }
 
     bundle<T>(..._: NSP.Node<T>[]): NSP.NodeFn<T> {
-        const fn = nspBundle(arguments);
-        return nspCatch(this, fn);
+        const fn = bundle(arguments);
+        return catchFn(this, fn);
     }
 
     parse(src: string): NSP.Parser {
