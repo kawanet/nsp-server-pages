@@ -15,12 +15,14 @@ declare namespace NSP {
 
     type TagFn<A, T = any> = (tag: TagDef<A, T>) => NodeFn<T>;
 
-    type LoaderFn = (path: string) => Promise<NSP.NodeFn<any>>;
+    type LoaderFn = (path: string) => Promise<NodeFn<any>>;
 
     type TextFlex = string | Promise<string> | (string | Promise<string>)[];
 
+    type Build<T> = (nsp: App) => (context?: T) => string | Promise<string>;
+
     interface TagDef<A, T = any> {
-        app: NSP.App;
+        app: App;
         conf: any;
         name: string;
         attr: AttrFn<A, T>;
@@ -41,7 +43,7 @@ declare namespace NSP {
         vKey?: string;
 
         /**
-         * variable name for NSP.App instance
+         * variable name for App instance
          */
         nspKey?: string;
 
@@ -93,13 +95,13 @@ declare namespace NSP {
 
         fn(name: string): (...args: any[]) => any;
 
-        load<T>(path: string): Promise<NSP.NodeFn<T>>;
+        load<T>(path: string): Promise<NodeFn<T>>;
 
-        loadFile<T>(file: string): Promise<NSP.NodeFn<T>>;
+        loadFile<T>(file: string): Promise<NodeFn<T>>;
 
-        loadJS<T>(file: string): Promise<NSP.NodeFn<T>>;
+        loadJS<T>(file: string): Promise<NodeFn<T>>;
 
-        loadJSP<T>(file: string): Promise<NSP.NodeFn<T>>;
+        loadJSP<T>(file: string): Promise<NodeFn<T>>;
 
         log(message: string): void;
 
