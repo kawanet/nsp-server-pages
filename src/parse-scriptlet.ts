@@ -50,11 +50,15 @@ class ScriptletParser {
     toJS(option?: NSP.ToJSOption): string {
         const {app} = this;
         const {nspKey, vKey} = app.options;
+
+        const currentIndent = +option?.indent || 0;
+        const currentLF = currentIndent ? "\n" + " ".repeat(currentIndent) : "\n";
+
         let {src} = this;
 
         const type = typeMap[src.substring(0, 3)] || "scriptlet";
         if (type === "comment") {
-            src = src.replace(/\s\s+/sg, " ");
+            src = src.replace(/[ \t]*[\r\n]+/sg, `${currentLF}// `);
             return `// ${src}`;
         }
 
