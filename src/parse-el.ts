@@ -26,9 +26,8 @@ const floatRE = `${numericRE}(?:\\.${numericRE})?(?!\\.)`;
 const stringRE = `"(?:\\\\\\.|[^\\\\"])*"|'(?:\\\\\\.|[^\\\\'])*'`;
 const nameRE = `[A-Za-z_][A-Za-z_0-9]*(?![A-Za-z_0-9])`;
 const tagFnRE = `${nameRE}:${nameRE}\\(`;
-const variableRE = `${nameRE}(?:\\.${nameRE}|\\[(?:${numericRE}|${stringRE})\\])*`;
-const opRE = `[+\\-\\*/%=<>()!|&:?,]+(?![+\\-\\*/%=<>()!|&:?,])`;
-const itemRE = [tagFnRE, variableRE, floatRE, stringRE, opRE].join("|");
+const variableRE = `${nameRE}(?:\\.${nameRE}|\\[(?:${numericRE}|${stringRE})\\]|\\[)*`;
+const itemRE = [tagFnRE, variableRE, floatRE, stringRE].join("|");
 
 const tagFnRegExp = new RegExp(`^${tagFnRE}$`, "s");
 const variableRegExp = new RegExp(`^${variableRE}$`, "s");

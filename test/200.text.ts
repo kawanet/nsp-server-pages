@@ -70,4 +70,16 @@ describe(TITLE, () => {
         assert.equal(fn({foo: true}), "[T]");
         assert.equal(fn({foo: false}), "[F]");
     });
+
+    it(`brackets[]`, async () => {
+        const fn = parseText(nsp, "[${ foo[bar + buz] }]").toFn();
+
+        assert.equal(fn({foo: {BarBuz: "Foo"}, bar: "Bar", buz: "Buz"}), "[Foo]");
+    });
+
+    it(`parentheses()`, async () => {
+        const fn = parseText(nsp, "[${ foo(bar + buz) }]").toFn();
+
+        assert.equal(fn({foo: (s: string) => s?.toUpperCase(), bar: "Bar", buz: "Buz"}), "[BARBUZ]");
+    });
 });
