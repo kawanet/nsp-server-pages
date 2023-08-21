@@ -41,7 +41,7 @@ class Element {
      */
     toJS(option?: NSP.ToJSOption): string {
         const {app, tagLine} = this;
-        const {comment, nspKey, vKey} = app.options;
+        const {comment, nspKey, trimSpaces, vKey} = app.options;
 
         const indent = +app.options.indent || 0;
         const currentIndent = +option?.indent || 0;
@@ -56,8 +56,15 @@ class Element {
                 return item.toJS({indent: nextIndent});
             } else if (!/\S/.test(item)) {
                 // item with only whitespace
-                return '""';
+                return (trimSpaces !== false) ? '""' : JSON.stringify(item);
             } else {
+                if (trimSpaces !== false) {
+                    item = item.replace(/^\s*[\r\n]/s, "\n");
+                    item = item.replace(/\s*[\r\n]\s*$/s, "\n");
+                    item = item.replace(/^[ \t]+/s, " ");
+                    item = item.replace(/[ \t]+$/s, " ");
+                }
+
                 let js = parseText(app, item).toJS({indent: nextIndent});
                 if (/\(.+?\)|\$\{.+?}/s.test(js)) {
                     js = `${vKey} => ${js}`; // array function
@@ -188,8 +195,6 @@ const tagRegExp = new RegExp(`(</?${nameRE}:(?:${insideRE})*?>)|(<%(?:${insideRE
 export const jspToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): string => {
     const root = new Element(app);
     const tree = new Tree(root);
-    const {trimSpaces} = app.options;
-
     const array = src.split(tagRegExp);
 
     for (let i = 0; i < array.length; i++) {
@@ -218,14 +223,6 @@ export const jspToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): stri
 
         } else if (i3 === 0) {
             // text node
-            if (trimSpaces !== false) {
-                str = str.replace(/^\s*[\r\n]/s, "\n");
-                str = str.replace(/\s*[\r\n]\s*$/s, "\n");
-
-                str = str.replace(/^[ \t]+/s, " ");
-                str = str.replace(/[ \t]+$/s, " ");
-            }
-
             tree.append(str);
         }
     }
