@@ -1,7 +1,7 @@
 import {strict as assert} from "assert";
 import {createNSP} from "../index.js";
 
-const TITLE = "610.nonull.ts";
+const TITLE = "610.nullish.ts";
 
 describe(TITLE, () => {
     const nspD = createNSP({});
