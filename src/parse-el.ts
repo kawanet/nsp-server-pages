@@ -26,7 +26,7 @@ const floatRE = `${numericRE}(?:\\.${numericRE})?(?!\\.)`;
 const stringRE = `"(?:\\\\\\.|[^\\\\"])*"|'(?:\\\\\\.|[^\\\\'])*'`;
 const nameRE = `[A-Za-z_][A-Za-z_0-9]*(?![A-Za-z_0-9])`;
 const tagFnRE = `${nameRE}:${nameRE}\\(`;
-const variableRE = `${nameRE}(?:\\.${nameRE}|\\[(?:${numericRE}|${stringRE})\\]|\\[)*`;
+const variableRE = `${nameRE}(?:\\??\\.${nameRE}|(?:\\?\\.)?\\[(?:${numericRE}|${stringRE})\\]|\\[)*`;
 const itemRE = [tagFnRE, variableRE, floatRE, stringRE].join("|");
 
 const tagFnRegExp = new RegExp(`^${tagFnRE}$`, "s");
@@ -88,8 +88,8 @@ class ElParser {
                     array[i] = `${nspKey}.fn(${JSON.stringify(exp)})(`;
                 } else if (variableRegExp.test(exp)) {
                     // variable
-                    exp = exp.replace(/\./g, "?.");
-                    exp = exp.replace(/\[/g, "?.[");
+                    exp = exp.replace(/(\?)?\./g, "?.");
+                    exp = exp.replace(/(\?\.)?\[/g, "?.[");
                     exp = exp.replace(/\s+$/, "");
                     array[i] = `${vKey}.${exp}`;
                 }
