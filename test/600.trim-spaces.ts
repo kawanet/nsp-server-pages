@@ -1,7 +1,7 @@
 import {strict as assert} from "assert";
 import {createNSP} from "../index.js";
 
-const TITLE = "500.nsp-load.ts";
+const TITLE = "600.trim-spaces.ts";
 
 describe(TITLE, () => {
     const tag = {

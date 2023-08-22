@@ -66,7 +66,7 @@ class ElParser {
      */
     toJS(_?: NSP.ToJSOption) {
         const {app} = this;
-        const {prefilter, postfilter} = app.options;
+        const {nullish, prefilter, postfilter} = app.options;
 
         let src = trim(this.src);
         if (prefilter) src = prefilter(src);
@@ -100,6 +100,14 @@ class ElParser {
         }
 
         let js = array.join("");
+
+        if (!nullish) {
+            if (array.filter(v => /\S/.test(v)).length > 1) {
+                js = `(${js})`;
+            }
+            js = `${js} ?? ""`;
+        }
+
         if (postfilter) js = postfilter(js);
 
         return js;

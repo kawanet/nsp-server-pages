@@ -87,17 +87,17 @@ describe(TITLE, () => {
         const fn = parseText(nsp, "[${ foo.bar['buz'] }]").toFn();
 
         assert.equal(fn({foo: {bar: {buz: "FooBarBuz"}}}), "[FooBarBuz]");
-        // assert.equal(fn({foo: {bar: {buz: null}}}), "[]");
-        // assert.equal(fn({foo: {bar: null}}), "[]");
-        // assert.equal(fn({foo: null}), "[]");
+        assert.equal(fn({foo: {bar: {buz: null}}}), "[]");
+        assert.equal(fn({foo: {bar: null}}), "[]");
+        assert.equal(fn({foo: null}), "[]");
     });
 
     it(`optional chaining`, async () => {
         const fn = parseText(nsp, "[${ foo?.bar?.['buz'] }]").toFn();
 
         assert.equal(fn({foo: {bar: {buz: "FooBarBuz"}}}), "[FooBarBuz]");
-        // assert.equal(fn({foo: {bar: {buz: null}}}), "[]");
-        // assert.equal(fn({foo: {bar: null}}), "[]");
-        // assert.equal(fn({foo: null}), "[]");
+        assert.equal(fn({foo: {bar: {buz: null}}}), "[]");
+        assert.equal(fn({foo: {bar: null}}), "[]");
+        assert.equal(fn({foo: null}), "[]");
     });
 });

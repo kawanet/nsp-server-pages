@@ -58,9 +58,16 @@ declare namespace NSP {
         comment?: boolean;
 
         /**
-         * remove edge spaces in HTML in some cases
+         * set false not to remove edge spaces in HTML in some cases.
+         * @default true
          */
         trimSpaces?: boolean;
+
+        /**
+         * set true to keep EL result value of `null` and `undefined` as is.
+         * @default false
+         */
+        nullish?: boolean;
 
         /**
          * expression filter before transpile starts
