@@ -23,7 +23,6 @@ declare namespace NSP {
 
     interface TagDef<A, T = any> {
         app: App;
-        conf: any;
         name: string;
         attr: AttrFn<A, T>;
         body: NodeFn<T>;
@@ -31,11 +30,6 @@ declare namespace NSP {
 
     interface Options {
         logger?: { log: (message: string) => void };
-
-        /**
-         * tag configuration
-         */
-        conf?: { [tagName: string]: any };
 
         /**
          * variable name for context

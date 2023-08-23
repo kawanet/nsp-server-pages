@@ -23,7 +23,6 @@ class App implements NSP.App {
 
     constructor(options?: NSP.Options) {
         this.options = options = Object.create(options || null);
-        if (!options.conf) options.conf = {};
         if (!options.vKey) options.vKey = "v";
         if (!options.nspKey) options.nspKey = "nsp";
     }
