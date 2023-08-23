@@ -91,13 +91,13 @@ declare namespace NSP {
 
         concat(...text: TextFlex[]): string | Promise<string>;
 
-        emit<T>(type: "error", e: Error, context?: T): string;
+        process<T>(type: "error", e: Error, context?: T): string;
 
-        emit<T>(type: "directive", src: string, context?: T): string;
+        process<T>(type: "directive", src: string, context?: T): string;
 
-        emit<T>(type: "declaration", src: string, context?: T): string;
+        process<T>(type: "declaration", src: string, context?: T): string;
 
-        emit<T>(type: "scriptlet", src: string, context?: T): string;
+        process<T>(type: "scriptlet", src: string, context?: T): string;
 
         fn(name: string): (...args: any[]) => any;
 
@@ -113,13 +113,13 @@ declare namespace NSP {
 
         mount(match: RegExp | string, fn: LoaderFn): void;
 
-        on(type: "error", fn: <T>(e: Error, context?: T) => string | void): void;
+        register(type: "error", fn: <T>(e: Error, context?: T) => string | void): void;
 
-        on(type: "directive", fn: <T>(src: string, context?: T) => string | void): void;
+        register(type: "directive", fn: <T>(src: string, context?: T) => string | void): void;
 
-        on(type: "declaration", fn: <T>(src: string, context?: T) => string | void): void;
+        register(type: "declaration", fn: <T>(src: string, context?: T) => string | void): void;
 
-        on(type: "scriptlet", fn: <T>(src: string, context?: T) => string | void): void;
+        register(type: "scriptlet", fn: <T>(src: string, context?: T) => string | void): void;
 
         parse(src: string): Parser;
 

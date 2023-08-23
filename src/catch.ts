@@ -20,7 +20,7 @@ export const catchFn = <T>(app: NSP.App, fn: NSP.NodeFn<T>): NSP.NodeFn<T> => {
         }
 
         function errorHandler(e: Error): string {
-            const result = app.emit("error", e, context);
+            const result = app.process("error", e, context);
             if (result == null) {
                 return `<!--\n[ERR] ${escapeError(e)}\n-->`;
             }

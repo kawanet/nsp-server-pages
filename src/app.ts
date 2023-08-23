@@ -28,11 +28,11 @@ class App implements NSP.App {
         if (!options.storeKey) options.storeKey = "#nsp";
     }
 
-    on(type: string, fn: any): void {
+    register(type: string, fn: any): void {
         this.listeners.set(type, fn);
     }
 
-    emit(type: string, arg: any): any {
+    process(type: string, arg: any): any {
         const fn = this.listeners.get(type);
         if (fn) return fn(arg);
     }

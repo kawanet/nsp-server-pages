@@ -73,7 +73,7 @@ class ScriptletParser {
 
         src = /`|\$\{/.test(src) ? JSON.stringify(src) : "`" + src + "`";
 
-        src = `${vKey} => ${nspKey}.emit("${type}", ${src}, ${vKey})`;
+        src = `${vKey} => ${nspKey}.process("${type}", ${src}, ${vKey})`;
 
         return src;
     }

@@ -8,7 +8,7 @@ describe(TITLE, () => {
 
     const nsp = createNSP({logger});
 
-    nsp.on("error", (e: Error): void => {
+    nsp.register("error", (e: Error): void => {
         if (e instanceof SyntaxError) throw e;
     });
 
