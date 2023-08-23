@@ -29,14 +29,14 @@ class ScriptletParser {
      */
     toFn<T>() {
         const {app} = this;
-        const {nspKey} = app.options;
+        const {nspName} = app.options;
 
         const js = this.toJS();
         const isComment = /^\/\/[^\n]*$/s.test(js);
         if (isComment) return (): string => null;
 
         try {
-            const fn = Function(nspKey, `return ${js}`) as (app: NSP.App) => (v: T) => string;
+            const fn = Function(nspName, `return ${js}`) as (app: NSP.App) => (v: T) => string;
             return fn(app);
         } catch (e) {
             app.log("ScriptletParser: " + js?.substring(0, 1000));
@@ -49,7 +49,7 @@ class ScriptletParser {
      */
     toJS(option?: NSP.ToJSOption): string {
         const {app} = this;
-        const {nspKey, vKey} = app.options;
+        const {nspName, vName} = app.options;
 
         const currentIndent = +option?.indent || 0;
         const currentLF = currentIndent ? "\n" + " ".repeat(currentIndent) : "\n";
@@ -66,14 +66,14 @@ class ScriptletParser {
             src = src.replace(/^<%=\s*/s, "");
             src = src.replace(/\s*%>$/s, "");
             src = parseEL(app, src).toJS(option);
-            return `${vKey} => (${src})`;
+            return `${vName} => (${src})`;
         }
 
         app.log(`${type} found: ${src?.substring(0, 1000)}`);
 
         src = /`|\$\{/.test(src) ? JSON.stringify(src) : "`" + src + "`";
 
-        src = `${vKey} => ${nspKey}.process("${type}", ${src}, ${vKey})`;
+        src = `${vName} => ${nspName}.process("${type}", ${src}, ${vName})`;
 
         return src;
     }

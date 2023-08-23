@@ -24,12 +24,12 @@ class AttrParser {
      */
     toFn<A, T = any>(): NSP.AttrFn<A, T> {
         const {app} = this;
-        const {nspKey, vKey} = app.options;
+        const {nspName, vName} = app.options;
 
         const js = this.toJS();
 
         try {
-            const fn = Function(nspKey, vKey, `return ${js}`) as (app: NSP.App, v: T) => A;
+            const fn = Function(nspName, vName, `return ${js}`) as (app: NSP.App, v: T) => A;
             return (context?: T) => fn(app, context);
         } catch (e) {
             app.log("AttrParser: " + js.substring(0, 1000));

@@ -34,12 +34,12 @@ declare namespace NSP {
         /**
          * variable name for context
          */
-        vKey?: string;
+        vName?: string;
 
         /**
          * variable name for App instance
          */
-        nspKey?: string;
+        nspName?: string;
 
         /**
          * property name for data store in context

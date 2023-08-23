@@ -42,12 +42,12 @@ class TextParser {
      */
     toFn<T>() {
         const {app} = this;
-        const {nspKey, vKey} = app.options;
+        const {nspName, vName} = app.options;
 
         const js = this.toJS();
 
         try {
-            const fn = Function(nspKey, vKey, `return ${js}`) as (app: NSP.App, v: T) => string | Promise<string>;
+            const fn = Function(nspName, vName, `return ${js}`) as (app: NSP.App, v: T) => string | Promise<string>;
             return (context?: T) => fn(app, context);
         } catch (e) {
             app.log("TextParser: " + js?.substring(0, 1000));

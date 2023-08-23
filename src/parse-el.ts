@@ -48,12 +48,12 @@ class ElParser {
      */
     toFn<T>() {
         const {app} = this;
-        const {nspKey, vKey} = app.options;
+        const {nspName, vName} = app.options;
 
         const js = this.toJS();
 
         try {
-            const fn = Function(nspKey, vKey, `return ${js}`) as (app: NSP.App, v: T) => string;
+            const fn = Function(nspName, vName, `return ${js}`) as (app: NSP.App, v: T) => string;
             return (context?: T) => fn(app, context);
         } catch (e) {
             app.log("ElParser: " + js?.substring(0, 1000));
@@ -73,7 +73,7 @@ class ElParser {
         if (src == null) return 'null';
 
         const array = src.split(itemRegExp);
-        const {nspKey, vKey} = app.options;
+        const {nspName, vName} = app.options;
 
         for (let i = 0; i < array.length; i++) {
             let exp = array[i];
@@ -85,13 +85,13 @@ class ElParser {
                 } else if (tagFnRegExp.test(exp)) {
                     // taglib function
                     exp = exp.replace(/\($/, "");
-                    array[i] = `${nspKey}.fn(${JSON.stringify(exp)})(`;
+                    array[i] = `${nspName}.fn(${JSON.stringify(exp)})(`;
                 } else if (variableRegExp.test(exp)) {
                     // variable
                     exp = exp.replace(/(\?)?\./g, "?.");
                     exp = exp.replace(/(\?\.)?\[/g, "?.[");
                     exp = exp.replace(/\s+$/, "");
-                    array[i] = `${vKey}.${exp}`;
+                    array[i] = `${vName}.${exp}`;
                 }
             } else {
                 // less spaces
