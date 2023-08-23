@@ -12,7 +12,7 @@ interface CTX {
 }
 
 describe(TITLE, () => {
-    const nsp = createNSP({logger: {log: () => null}});
+    const nsp = createNSP();
     const attr: ATTR = {};
     const ctx: CTX = {};
 
