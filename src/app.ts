@@ -25,6 +25,7 @@ class App implements NSP.App {
         this.options = options = Object.create(options || null);
         if (!options.vKey) options.vKey = "v";
         if (!options.nspKey) options.nspKey = "nsp";
+        if (!options.storeKey) options.storeKey = "#nsp";
     }
 
     on(type: string, fn: any): void {
@@ -91,5 +92,21 @@ class App implements NSP.App {
     loadFile<T = any>(file: string): Promise<NSP.NodeFn<T>> {
         const loader = this.fileLoader || (this.fileLoader = new FileLoader(this));
         return loader.load<T>(file);
+    }
+
+    store<S>(context: any, key: string, initFn?: () => S): S {
+        if ("object" !== typeof context && context == null) {
+            throw new Error("Context must be an object");
+        }
+
+        const {storeKey} = this.options;
+        const map = context[storeKey] || (context[storeKey] = new Map());
+
+        let value = map.get(key);
+        if (value == null) {
+            value = initFn();
+            map.set(key, value);
+        }
+        return value;
     }
 }

@@ -42,6 +42,11 @@ declare namespace NSP {
         nspKey?: string;
 
         /**
+         * property name for data store in context
+         */
+        storeKey?: string;
+
+        /**
          * indent size for JavaScript source generated
          */
         indent?: number;
@@ -117,6 +122,8 @@ declare namespace NSP {
         on(type: "scriptlet", fn: <T>(src: string, context?: T) => string | void): void;
 
         parse(src: string): Parser;
+
+        store<S>(context: any, key: string, initFn?: () => S): S;
 
         tag<A, T = any>(name: string, attr?: A | AttrFn<A, T>, ...body: Node<T>[]): NodeFn<T>;
     }
