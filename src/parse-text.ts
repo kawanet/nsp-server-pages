@@ -48,7 +48,7 @@ class TextParser {
 
         try {
             const fn = Function(nspName, vName, `return ${js}`) as (app: NSP.App, v: T) => string | Promise<string>;
-            return (context?: T) => fn(app, context);
+            return (context: T) => fn(app, context);
         } catch (e) {
             app.log("TextParser: " + js?.substring(0, 1000));
             throw e;

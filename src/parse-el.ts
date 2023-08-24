@@ -54,7 +54,7 @@ class ElParser {
 
         try {
             const fn = Function(nspName, vName, `return ${js}`) as (app: NSP.App, v: T) => string;
-            return (context?: T) => fn(app, context);
+            return (context: T) => fn(app, context);
         } catch (e) {
             app.log("ElParser: " + js?.substring(0, 1000));
             throw e;

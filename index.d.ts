@@ -7,19 +7,21 @@
 export const createNSP: (options?: NSP.Options) => NSP.App;
 
 declare namespace NSP {
-    type NodeFn<T> = (context?: T) => string | Promise<string>;
+    type NodeFn<T> = (context: T) => string | Promise<string>;
 
     type Node<T> = string | NodeFn<T>;
 
-    type AttrFn<A, T = any> = (context?: T) => A;
+    type AttrFn<A, T = any> = (context: T) => A;
 
-    type TagFn<A, T = any> = (tag: TagDef<A, T>) => NodeFn<T>;
+    type VoidFn<T> = (context: T) => void | Promise<void>;
 
-    type LoaderFn = (path: string) => Promise<NodeFn<any>>;
+    type TagFn<A, T = any> = (tag: TagDef<A, T>) => (NodeFn<T> | VoidFn<T>);
 
-    type TextFlex = string | Promise<string> | (string | Promise<string>)[];
+    type LoaderFn = (path: string) => Promise<NodeFn<any> | undefined>;
 
-    type Build<T> = (nsp: App) => (context?: T) => string | Promise<string>;
+    type Strings = string | Promise<string> | Strings[];
+
+    type Build<T> = (nsp: App) => (context: T) => string | Promise<string>;
 
     interface TagDef<A, T = any> {
         app: App;
@@ -103,18 +105,18 @@ declare namespace NSP {
         /**
          * concat strings even if they are Promise<string>
          */
-        concat(...text: TextFlex[]): string | Promise<string>;
+        concat(...text: Strings[]): string | Promise<string>;
 
         /**
          * retrieve a result from hook function
          */
-        process<T>(type: "error", e: Error, context?: T): string;
+        process<T>(type: "error", e: Error, context: T): string;
 
-        process<T>(type: "directive", src: string, context?: T): string;
+        process<T>(type: "directive", src: string, context: T): string;
 
-        process<T>(type: "declaration", src: string, context?: T): string;
+        process<T>(type: "declaration", src: string, context: T): string;
 
-        process<T>(type: "scriptlet", src: string, context?: T): string;
+        process<T>(type: "scriptlet", src: string, context: T): string;
 
         /**
          * pickup the taglib function

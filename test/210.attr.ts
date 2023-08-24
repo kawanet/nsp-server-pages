@@ -6,20 +6,21 @@ const TITLE = "210.attr.ts";
 
 describe(TITLE, () => {
     const nsp = createNSP();
+    const ctx = {};
 
     it('empty tag', async () => {
         const fn = parseAttr(nsp, '<tag/>').toFn();
-        assert.deepEqual(fn(), null);
+        assert.deepEqual(fn(ctx), null);
     });
 
     it('single attribute', async () => {
         const fn = parseAttr(nsp, '<tag foo="Foo"/>').toFn();
-        assert.deepEqual(fn(), {foo: "Foo"});
+        assert.deepEqual(fn(ctx), {foo: "Foo"});
     });
 
     it('multiple attributes', async () => {
         const fn = parseAttr(nsp, '<tag foo="Foo" bar="Bar"/>').toFn();
-        assert.deepEqual(fn(), {foo: "Foo", bar: "Bar"});
+        assert.deepEqual(fn(ctx), {foo: "Foo", bar: "Bar"});
     });
 
     it(`dynamic attributes`, async () => {

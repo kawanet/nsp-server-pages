@@ -30,7 +30,7 @@ class AttrParser {
 
         try {
             const fn = Function(nspName, vName, `return ${js}`) as (app: NSP.App, v: T) => A;
-            return (context?: T) => fn(app, context);
+            return (context: T) => fn(app, context);
         } catch (e) {
             app.log("AttrParser: " + js.substring(0, 1000));
             throw e;

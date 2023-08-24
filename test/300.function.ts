@@ -7,6 +7,7 @@ const TITLE = "300.function.ts";
 
 describe(TITLE, () => {
     const nsp = createNSP();
+    const ctx = {};
 
     nsp.addTagLib({
         ns: "test",
@@ -18,27 +19,27 @@ describe(TITLE, () => {
     })
 
     it("test:foobar()", async () => {
-        assert.equal(parseText(nsp, '${test:foobar()}').toFn()(), "FooBar");
+        assert.equal(parseText(nsp, '${test:foobar()}').toFn()(ctx), "FooBar");
 
-        assert.deepEqual(parseAttr(nsp, '<some:tag value="${test:foobar()}"/>').toFn()(), {value: "FooBar"});
+        assert.deepEqual(parseAttr(nsp, '<some:tag value="${test:foobar()}"/>').toFn()(ctx), {value: "FooBar"});
 
-        assert.equal(nsp.parse('[${test:foobar()}]').toFn()(), "[FooBar]");
+        assert.equal(nsp.parse('[${test:foobar()}]').toFn()(ctx), "[FooBar]");
     });
 
     it("test:upper(str)", async () => {
-        assert.equal(parseText(nsp, '${test:upper("abc")}').toFn()(), "ABC");
+        assert.equal(parseText(nsp, '${test:upper("abc")}').toFn()(ctx), "ABC");
 
-        assert.deepEqual(parseAttr(nsp, '<some:tag value="${test:upper(\'abc\')}"/>').toFn()(), {value: "ABC"});
+        assert.deepEqual(parseAttr(nsp, '<some:tag value="${test:upper(\'abc\')}"/>').toFn()(ctx), {value: "ABC"});
 
-        assert.equal(nsp.parse('[${test:upper("abc")}]').toFn()(), "[ABC]");
+        assert.equal(nsp.parse('[${test:upper("abc")}]').toFn()(ctx), "[ABC]");
     });
 
     it("test:add(a, b)", async () => {
-        assert.equal(parseText(nsp, '${test:add(1, 1)}').toFn()(), "2");
+        assert.equal(parseText(nsp, '${test:add(1, 1)}').toFn()(ctx), "2");
 
-        assert.deepEqual(parseAttr(nsp, '<some:tag value="${test:add(2, 2)}"/>').toFn()(), {value: "4"});
+        assert.deepEqual(parseAttr(nsp, '<some:tag value="${test:add(2, 2)}"/>').toFn()(ctx), {value: "4"});
 
-        assert.equal(nsp.parse('[${test:add(3, 3)}]').toFn()(), "[6]");
+        assert.equal(nsp.parse('[${test:add(3, 3)}]').toFn()(ctx), "[6]");
     });
 
     it("test:upper(str) with context", async () => {

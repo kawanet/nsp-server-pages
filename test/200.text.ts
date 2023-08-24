@@ -8,10 +8,11 @@ describe(TITLE, () => {
     const nsp = createNSP();
 
     it(`static content`, async () => {
+        const context = {};
         const fn = parseText(nsp, "ABC").toFn();
         const expected = "ABC";
 
-        assert.equal(fn(), expected);
+        assert.equal(fn(context), expected);
     });
 
     it(`Dynamic content`, async () => {
@@ -31,10 +32,11 @@ describe(TITLE, () => {
     });
 
     it(`primitive`, async () => {
+        const context = {};
         const fn = parseText(nsp, "[${ 1 }][${ 'string' }]").toFn();
         const expected = "[1][string]";
 
-        assert.equal(fn(), expected);
+        assert.equal(fn(context), expected);
     });
 
     it(`expression`, async () => {
