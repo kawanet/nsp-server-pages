@@ -1,18 +1,17 @@
 import {strict as assert} from "assert";
 import {createNSP, NSP} from "../index.js";
 
-const TITLE = "400.on-error.ts";
+const TITLE = "400.hook-error.ts";
 
 describe(TITLE, () => {
-    const logger = {log: (): void => null};
-
-    const nsp = createNSP({logger});
+    const nsp = createNSP();
 
     /**
      * This pass the error to the next handler when it's a SyntaxError but not other errors.
      */
-    nsp.hook("error", (e: Error): void => {
+    nsp.hook("error", (e: Error): string => {
         if (e instanceof SyntaxError) throw e;
+        return `[${e?.message}]`;
     });
 
     nsp.addTagLib({

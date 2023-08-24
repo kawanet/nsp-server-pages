@@ -110,14 +110,6 @@ declare namespace NSP {
         /**
          * retrieve a result from hook function
          */
-        process(type: "error", e: Error, context: any): string;
-
-        process(type: "directive", src: string, context: any): string;
-
-        process(type: "declaration", src: string, context: any): string;
-
-        process(type: "scriptlet", src: string, context: any): string;
-
         process<R>(type: string, ...args: any[]): R;
 
         /**
