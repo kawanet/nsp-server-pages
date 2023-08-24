@@ -8,15 +8,18 @@ export const bundle = <T>(array: ArrayLike<NSP.Node<T>>, start?: number, end?: n
     start = +start || 0;
     end = +end || array?.length || 0;
 
+    // empty
     if (end <= start) {
         return () => null;
     }
 
+    // single item
     if (end - 1 === start) {
         const node = array[start];
         return (typeof node === "function") ? node : () => node;
     }
 
+    // multiple items
     return context => {
         let result: string;
         let promise: Promise<string>;
