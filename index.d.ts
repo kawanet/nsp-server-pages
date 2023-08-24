@@ -13,7 +13,9 @@ declare namespace NSP {
 
     type AttrFn<A, T = any> = (context: T) => A;
 
-    type TagFn<A, T = any> = (tag: TagDef<A, T>) => NodeFn<T> | void;
+    type VoidFn<T> = (context: T) => void | Promise<void>;
+
+    type TagFn<A, T = any> = (tag: TagDef<A, T>) => (NodeFn<T> | VoidFn<T>);
 
     type LoaderFn = (path: string) => Promise<NodeFn<any>>;
 
