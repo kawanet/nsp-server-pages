@@ -4,9 +4,9 @@ const isPromise = <T>(v: any): v is Promise<T> => v && (typeof v.then === "funct
 
 const join = (a: string, b: string): string => (a == null ? b : (b == null ? a : a + b));
 
-const single = (v: NSP.TextFlex): string | Promise<string> => (Array.isArray(v) ? concat(v) : v);
+const single = (v: NSP.Strings): string | Promise<string> => (Array.isArray(v) ? concat(v) : v);
 
-export const concat = (array: ArrayLike<NSP.TextFlex>): string | Promise<string> => {
+export const concat = (array: ArrayLike<NSP.Strings>): string | Promise<string> => {
     let result: string;
     let promise: Promise<string>;
 

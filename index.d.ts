@@ -17,9 +17,9 @@ declare namespace NSP {
 
     type TagFn<A, T = any> = (tag: TagDef<A, T>) => (NodeFn<T> | VoidFn<T>);
 
-    type LoaderFn = (path: string) => Promise<NodeFn<any>>;
+    type LoaderFn = (path: string) => Promise<NodeFn<any> | undefined>;
 
-    type TextFlex = string | Promise<string> | (string | Promise<string>)[];
+    type Strings = string | Promise<string> | Strings[];
 
     type Build<T> = (nsp: App) => (context: T) => string | Promise<string>;
 
@@ -105,7 +105,7 @@ declare namespace NSP {
         /**
          * concat strings even if they are Promise<string>
          */
-        concat(...text: TextFlex[]): string | Promise<string>;
+        concat(...text: Strings[]): string | Promise<string>;
 
         /**
          * retrieve a result from hook function
