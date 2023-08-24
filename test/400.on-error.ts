@@ -11,7 +11,7 @@ describe(TITLE, () => {
     /**
      * This pass the error to the next handler when it's a SyntaxError but not other errors.
      */
-    nsp.register("error", (e: Error): void => {
+    nsp.hook("error", (e: Error): void => {
         if (e instanceof SyntaxError) throw e;
     });
 

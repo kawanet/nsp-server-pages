@@ -91,6 +91,9 @@ declare namespace NSP {
 
         concat(...text: TextFlex[]): string | Promise<string>;
 
+        /**
+         * retrieve a result from hook function
+         */
         process<T>(type: "error", e: Error, context?: T): string;
 
         process<T>(type: "directive", src: string, context?: T): string;
@@ -113,13 +116,13 @@ declare namespace NSP {
 
         mount(match: RegExp | string, fn: LoaderFn): void;
 
-        register(type: "error", fn: <T>(e: Error, context?: T) => string | void): void;
+        hook(type: "error", fn: <T>(e: Error, context?: T) => string | void): void;
 
-        register(type: "directive", fn: <T>(src: string, context?: T) => string | void): void;
+        hook(type: "directive", fn: <T>(src: string, context?: T) => string | void): void;
 
-        register(type: "declaration", fn: <T>(src: string, context?: T) => string | void): void;
+        hook(type: "declaration", fn: <T>(src: string, context?: T) => string | void): void;
 
-        register(type: "scriptlet", fn: <T>(src: string, context?: T) => string | void): void;
+        hook(type: "scriptlet", fn: <T>(src: string, context?: T) => string | void): void;
 
         parse(src: string): Parser;
 

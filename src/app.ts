@@ -28,7 +28,7 @@ class App implements NSP.App {
         if (!options.storeKey) options.storeKey = "#nsp";
     }
 
-    register(type: string, fn: any): void {
+    hook(type: string, fn: any): void {
         this.listeners.set(type, fn);
     }
 
