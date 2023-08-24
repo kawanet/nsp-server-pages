@@ -48,7 +48,7 @@ describe(TITLE, () => {
     });
 
     it("multiple async functions", async () => {
-        const fn = await nsp.bundle(
+        const fn = nsp.bundle(
             async () => "Foo",
             async () => "Bar",
             async () => "Buz",
