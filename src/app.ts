@@ -16,7 +16,7 @@ class App implements NSP.App {
     fnMap = new Map<string, (...args: any[]) => any>();
     options: NSP.Options;
 
-    protected listeners = new Map<string, Function>;
+    protected hooks = new Map<string, (...args: any[]) => any>;
     protected jsLoader: JsLoader;
     protected jspLoader: JspLoader;
     protected fileLoader: FileLoader;
@@ -28,13 +28,13 @@ class App implements NSP.App {
         if (!options.storeKey) options.storeKey = "#nsp";
     }
 
-    hook(type: string, fn: any): void {
-        this.listeners.set(type, fn);
+    hook(type: string, fn: (...args: any[]) => any): void {
+        this.hooks.set(type, fn);
     }
 
-    process(type: string, arg: any): any {
-        const fn = this.listeners.get(type);
-        if (fn) return fn(arg);
+    process(type: string, ...args: any[]): any {
+        const fn = this.hooks.get(type);
+        if (fn) return fn.apply(null, args);
     }
 
     log(message: string): void {

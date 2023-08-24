@@ -110,13 +110,15 @@ declare namespace NSP {
         /**
          * retrieve a result from hook function
          */
-        process<T>(type: "error", e: Error, context: T): string;
+        process(type: "error", e: Error, context: any): string;
 
-        process<T>(type: "directive", src: string, context: T): string;
+        process(type: "directive", src: string, context: any): string;
 
-        process<T>(type: "declaration", src: string, context: T): string;
+        process(type: "declaration", src: string, context: any): string;
 
-        process<T>(type: "scriptlet", src: string, context: T): string;
+        process(type: "scriptlet", src: string, context: any): string;
+
+        process<R>(type: string, ...args: any[]): R;
 
         /**
          * pickup the taglib function
@@ -150,13 +152,15 @@ declare namespace NSP {
         /**
          * register a hook function
          */
-        hook(type: "error", fn: <T>(e: Error, context?: T) => string | void): void;
+        hook(type: "error", fn: (e: Error, context?: any) => string | void): void;
 
-        hook(type: "directive", fn: <T>(src: string, context?: T) => string | void): void;
+        hook(type: "directive", fn: (src: string, context?: any) => string | void): void;
 
-        hook(type: "declaration", fn: <T>(src: string, context?: T) => string | void): void;
+        hook(type: "declaration", fn: (src: string, context?: any) => string | void): void;
 
-        hook(type: "scriptlet", fn: <T>(src: string, context?: T) => string | void): void;
+        hook(type: "scriptlet", fn: (src: string, context?: any) => string | void): void;
+
+        hook(type: string, fn: (...args: any[]) => any): void;
 
         /**
          * parse a JSP document
