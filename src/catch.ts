@@ -1,10 +1,6 @@
-import {toXML} from "to-xml";
-
 import type {NSP} from "../index.js"
 
 const isPromise = <T>(v: any): v is Promise<T> => v && (typeof v.catch === "function");
-
-const escapeError = (e: Error): string => toXML({"#": (e?.message || String(e))});
 
 interface TagData {
     error?: Error;
@@ -31,11 +27,14 @@ export const catchFn = <T>(app: NSP.App, fn: NSP.NodeFn<T>): NSP.NodeFn<T> => {
                 data.error = e;
             }
 
-            // call the error handler
-            const result = app.process("error", e, context);
-            if (result != null) return result as string;
+            // call the error hook
+            const result: string = app.process("error", e, context);
 
-            return `<!--\n[ERR] ${escapeError(e)}\n-->`;
+            // if the hook returns nothing, throw the error
+            if (result == null) throw e;
+
+            // if the hook returns a string, show it
+            return result;
         }
     }
 };
