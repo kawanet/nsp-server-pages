@@ -33,26 +33,31 @@ declare namespace NSP {
 
         /**
          * variable name for context
+         * @default "v"
          */
         vName?: string;
 
         /**
          * variable name for App instance
+         * @default "nsp"
          */
         nspName?: string;
 
         /**
          * property name for data store in context
+         * @default "#nsp"
          */
         storeKey?: string;
 
         /**
          * indent size for JavaScript source generated
+         * @default 0
          */
         indent?: number;
 
         /**
          * add comments at toJS() result
+         * @default false
          */
         comment?: boolean;
 
@@ -85,10 +90,19 @@ declare namespace NSP {
         options: Options;
         tagMap: Map<string, TagFn<any>>;
 
+        /**
+         * register a tag library
+         */
         addTagLib(tagLibDef: TagLibDef): void;
 
-        bundle<T>(...node: Node<T>[]): NodeFn<T>;
+        /**
+         * build a NodeFn which returns a string for the content nodes
+         */
+        bundle<T>(...nodes: Node<T>[]): NodeFn<T>;
 
+        /**
+         * concat strings even if they are Promise<string>
+         */
         concat(...text: TextFlex[]): string | Promise<string>;
 
         /**
@@ -102,20 +116,38 @@ declare namespace NSP {
 
         process<T>(type: "scriptlet", src: string, context?: T): string;
 
+        /**
+         * pickup the taglib function
+         */
         fn(name: string): (...args: any[]) => any;
 
+        /**
+         * load a NodeFn for the path mounted by mount()
+         */
         load<T>(path: string): Promise<NodeFn<T>>;
 
+        /**
+         * load a NodeFn for the local filesystem path
+         */
         loadFile<T>(file: string): Promise<NodeFn<T>>;
 
         loadJS<T>(file: string): Promise<NodeFn<T>>;
 
         loadJSP<T>(file: string): Promise<NodeFn<T>>;
 
+        /**
+         * log a message via options.logger which defaults console.log
+         */
         log(message: string): void;
 
-        mount(match: RegExp | string, fn: LoaderFn): void;
+        /**
+         * mount a loader function for the path matched
+         */
+        mount(path: RegExp | string, fn: LoaderFn): void;
 
+        /**
+         * register a hook function
+         */
         hook(type: "error", fn: <T>(e: Error, context?: T) => string | void): void;
 
         hook(type: "directive", fn: <T>(src: string, context?: T) => string | void): void;
@@ -124,18 +156,36 @@ declare namespace NSP {
 
         hook(type: "scriptlet", fn: <T>(src: string, context?: T) => string | void): void;
 
+        /**
+         * parse a JSP document
+         */
         parse(src: string): Parser;
 
+        /**
+         * get a private data store in context
+         */
         store<S>(context: any, key: string, initFn?: () => S): S;
 
+        /**
+         * generates a NodeFn for the tag
+         */
         tag<A, T = any>(name: string, attr?: A | AttrFn<A, T>, ...body: Node<T>[]): NodeFn<T>;
     }
 
     interface TagLibDef {
+        /**
+         * namespace
+         */
         ns: string;
 
+        /**
+         * functions
+         */
         fn?: { [name: string]: (...args: any[]) => any };
 
+        /**
+         * tags
+         */
         tag?: { [name: string]: TagFn<any> };
     }
 
@@ -147,8 +197,14 @@ declare namespace NSP {
      * Parser for JSP document
      */
     interface Parser {
+        /**
+         * transpile the JSP document to JavaScript source code
+         */
         toJS(option?: ToJSOption): string;
 
+        /**
+         * compile the JSP document as a NodeFn
+         */
         toFn<T>(): NodeFn<T>;
     }
 }

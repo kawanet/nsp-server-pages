@@ -71,8 +71,8 @@ class App implements NSP.App {
         return parseJSP(this, src);
     }
 
-    mount(match: RegExp | string, fn: NSP.LoaderFn): void {
-        return mount(this, match, fn);
+    mount(path: RegExp | string, fn: NSP.LoaderFn): void {
+        return mount(this, path, fn);
     }
 
     load<T = any>(path: string): Promise<NSP.NodeFn<T>> {
