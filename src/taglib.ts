@@ -28,7 +28,9 @@ export const prepareTag = <A, T = any>(app: NSP.App, name: string, attr: A | NSP
 
     const tagDef: NSP.TagDef<A, T> = {name, app, attr: attrFn, body};
 
-    return tagFn(tagDef);
+    const result = tagFn(tagDef);
+
+    if (result) return result;
 }
 
 const defaultTagFn = <A = any, T = any>(tagDef: NSP.TagDef<A, T>) => {

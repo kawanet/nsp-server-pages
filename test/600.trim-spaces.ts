@@ -4,6 +4,8 @@ import {createNSP} from "../index.js";
 const TITLE = "600.trim-spaces.ts";
 
 describe(TITLE, () => {
+    const ctx = {};
+
     const tag = {
         L: () => () => "[",
         R: () => () => "]",
@@ -24,36 +26,36 @@ describe(TITLE, () => {
 
     it("space", async () => {
         const doc: string = ` <tag:L/> <tag:R/> `;
-        assert.equal(nspD.parse(doc).toFn()(), "[]", optD);
-        assert.equal(nspT.parse(doc).toFn()(), "[]", optT);
-        assert.equal(nspF.parse(doc).toFn()(), " [ ] ", optF);
+        assert.equal(nspD.parse(doc).toFn()(ctx), "[]", optD);
+        assert.equal(nspT.parse(doc).toFn()(ctx), "[]", optT);
+        assert.equal(nspF.parse(doc).toFn()(ctx), " [ ] ", optF);
     });
 
     it("LF", async () => {
         const doc: string = "\n<tag:L/>\n<tag:R/>\n";
-        assert.equal(nspD.parse(doc).toFn()(), "[]", optD);
-        assert.equal(nspT.parse(doc).toFn()(), "[]", optT);
-        assert.equal(nspF.parse(doc).toFn()(), "\n[\n]\n", optF);
+        assert.equal(nspD.parse(doc).toFn()(ctx), "[]", optD);
+        assert.equal(nspT.parse(doc).toFn()(ctx), "[]", optT);
+        assert.equal(nspF.parse(doc).toFn()(ctx), "\n[\n]\n", optF);
     });
 
     it("LF + indent", async () => {
         const doc: string = "\n  <tag:L/>\n  <tag:R/>\n";
-        assert.equal(JSON.stringify(nspD.parse(doc).toFn()()), JSON.stringify("[]"), optD);
-        assert.equal(JSON.stringify(nspT.parse(doc).toFn()()), JSON.stringify("[]"), optT);
-        assert.equal(JSON.stringify(nspF.parse(doc).toFn()()), JSON.stringify("\n  [\n  ]\n"), optF);
+        assert.equal(JSON.stringify(nspD.parse(doc).toFn()(ctx)), JSON.stringify("[]"), optD);
+        assert.equal(JSON.stringify(nspT.parse(doc).toFn()(ctx)), JSON.stringify("[]"), optT);
+        assert.equal(JSON.stringify(nspF.parse(doc).toFn()(ctx)), JSON.stringify("\n  [\n  ]\n"), optF);
     });
 
     it("edge space", async () => {
         const doc: string = " ( <tag:L/> | <tag:R/> ) ";
-        assert.equal(nspD.parse(doc).toFn()(), " ( [ | ] ) ", optD);
-        assert.equal(nspT.parse(doc).toFn()(), " ( [ | ] ) ", optT);
-        assert.equal(nspF.parse(doc).toFn()(), " ( [ | ] ) ", optF);
+        assert.equal(nspD.parse(doc).toFn()(ctx), " ( [ | ] ) ", optD);
+        assert.equal(nspT.parse(doc).toFn()(ctx), " ( [ | ] ) ", optT);
+        assert.equal(nspF.parse(doc).toFn()(ctx), " ( [ | ] ) ", optF);
     });
 
     it("edge LF + indent", async () => {
         const doc: string = "\n  (\n  <tag:L/>\n  |\n  <tag:R/>\n  )\n";
-        assert.equal(JSON.stringify(nspD.parse(doc).toFn()()), JSON.stringify("\n  (\n[\n  |\n]\n  )\n"), optD);
-        assert.equal(JSON.stringify(nspT.parse(doc).toFn()()), JSON.stringify("\n  (\n[\n  |\n]\n  )\n"), optT);
-        assert.equal(JSON.stringify(nspF.parse(doc).toFn()()), JSON.stringify("\n  (\n  [\n  |\n  ]\n  )\n"), optF);
+        assert.equal(JSON.stringify(nspD.parse(doc).toFn()(ctx)), JSON.stringify("\n  (\n[\n  |\n]\n  )\n"), optD);
+        assert.equal(JSON.stringify(nspT.parse(doc).toFn()(ctx)), JSON.stringify("\n  (\n[\n  |\n]\n  )\n"), optT);
+        assert.equal(JSON.stringify(nspF.parse(doc).toFn()(ctx)), JSON.stringify("\n  (\n  [\n  |\n  ]\n  )\n"), optF);
     });
 });
