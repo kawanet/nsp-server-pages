@@ -20,15 +20,13 @@ export const addTagLib = (app: NSP.App, tagLibDef: NSP.TagLibDef): void => {
 }
 
 export const prepareTag = <A, T = any>(app: NSP.App, name: string, attr: A | NSP.AttrFn<A, T>, body: NSP.NodeFn<T>): NSP.NodeFn<T> => {
-    const {tagMap, options} = app;
+    const {tagMap} = app;
 
     const tagFn: NSP.TagFn<A, T> = tagMap.get(name) || defaultTagFn;
 
-    const conf = options.conf[name];
-
     const attrFn: NSP.AttrFn<A, T> = !attr ? () => ({} as A) : (typeof attr !== "function") ? () => attr : (attr as NSP.AttrFn<A, T>);
 
-    const tagDef: NSP.TagDef<A, T> = {name, app, conf, attr: attrFn, body};
+    const tagDef: NSP.TagDef<A, T> = {name, app, attr: attrFn, body};
 
     return tagFn(tagDef);
 }

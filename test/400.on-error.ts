@@ -8,7 +8,10 @@ describe(TITLE, () => {
 
     const nsp = createNSP({logger});
 
-    nsp.on("error", (e: Error): void => {
+    /**
+     * This pass the error to the next handler when it's a SyntaxError but not other errors.
+     */
+    nsp.hook("error", (e: Error): void => {
         if (e instanceof SyntaxError) throw e;
     });
 

@@ -114,6 +114,22 @@ Launch web server with Express.js:
 
 ```js
 const nsp = createNSP();
+const app = express();
+
+app.use("/", async (req, res, next) => {
+    const {path} = req;
+    const context = {indexDto: {name: req.query.name || "nsp"}};
+    const render = nsp.loadJSP(`${BASE}/src/main/webapp/WEB-INF/${path}`);
+    if (!render) return next();
+    const html = await render(context);
+    res.type("html").send(html);
+});
+```
+
+Or use its own router `nsp.mount()` which helps to load JSP, HTML and JS files.
+
+```js
+const nsp = createNSP();
 
 // .jsp files compiled on demand
 nsp.mount("/view/", (path) => nsp.loadJSP(`${BASE}/src/main/webapp/WEB-INF/${path}`));
@@ -125,10 +141,12 @@ nsp.mount("/include/", (path) => nsp.loadFile(`${BASE}/htdocs/${path}`));
 nsp.mount("/cached/", (path) => nsp.loadJS(`${BASE}/cached/${path}`));
 
 const app = express();
+
 app.use("/", async (req, res, next) => {
     const context = {indexDto: {name: req.query.name || "nsp"}};
     const render = await nsp.load(req.path);
-    const html = render(context);
+    if (!render) return next();
+    const html = await render(context);
     res.type("html").send(html);
 });
 ```

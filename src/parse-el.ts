@@ -26,9 +26,8 @@ const floatRE = `${numericRE}(?:\\.${numericRE})?(?!\\.)`;
 const stringRE = `"(?:\\\\\\.|[^\\\\"])*"|'(?:\\\\\\.|[^\\\\'])*'`;
 const nameRE = `[A-Za-z_][A-Za-z_0-9]*(?![A-Za-z_0-9])`;
 const tagFnRE = `${nameRE}:${nameRE}\\(`;
-const variableRE = `${nameRE}(?:\\.${nameRE}|\\[(?:${numericRE}|${stringRE})\\])*`;
-const opRE = `[+\\-\\*/%=<>()!|&:?,]+(?![+\\-\\*/%=<>()!|&:?,])`;
-const itemRE = [tagFnRE, variableRE, floatRE, stringRE, opRE].join("|");
+const variableRE = `${nameRE}(?:\\??\\.${nameRE}|(?:\\?\\.)?\\[(?:${numericRE}|${stringRE})\\]|\\[)*`;
+const itemRE = [tagFnRE, variableRE, floatRE, stringRE].join("|");
 
 const tagFnRegExp = new RegExp(`^${tagFnRE}$`, "s");
 const variableRegExp = new RegExp(`^${variableRE}$`, "s");
@@ -49,12 +48,12 @@ class ElParser {
      */
     toFn<T>() {
         const {app} = this;
-        const {nspKey, vKey} = app.options;
+        const {nspName, vName} = app.options;
 
         const js = this.toJS();
 
         try {
-            const fn = Function(nspKey, vKey, `return ${js}`) as (app: NSP.App, v: T) => string;
+            const fn = Function(nspName, vName, `return ${js}`) as (app: NSP.App, v: T) => string;
             return (context?: T) => fn(app, context);
         } catch (e) {
             app.log("ElParser: " + js?.substring(0, 1000));
@@ -67,14 +66,14 @@ class ElParser {
      */
     toJS(_?: NSP.ToJSOption) {
         const {app} = this;
-        const {prefilter, postfilter} = app.options;
+        const {nullish, prefilter, postfilter} = app.options;
 
         let src = trim(this.src);
         if (prefilter) src = prefilter(src);
         if (src == null) return 'null';
 
         const array = src.split(itemRegExp);
-        const {nspKey, vKey} = app.options;
+        const {nspName, vName} = app.options;
 
         for (let i = 0; i < array.length; i++) {
             let exp = array[i];
@@ -86,13 +85,13 @@ class ElParser {
                 } else if (tagFnRegExp.test(exp)) {
                     // taglib function
                     exp = exp.replace(/\($/, "");
-                    array[i] = `${nspKey}.fn(${JSON.stringify(exp)})(`;
+                    array[i] = `${nspName}.fn(${JSON.stringify(exp)})(`;
                 } else if (variableRegExp.test(exp)) {
                     // variable
-                    exp = exp.replace(/\./g, "?.");
-                    exp = exp.replace(/\[/g, "?.[");
+                    exp = exp.replace(/(\?)?\./g, "?.");
+                    exp = exp.replace(/(\?\.)?\[/g, "?.[");
                     exp = exp.replace(/\s+$/, "");
-                    array[i] = `${vKey}.${exp}`;
+                    array[i] = `${vName}.${exp}`;
                 }
             } else {
                 // less spaces
@@ -101,6 +100,14 @@ class ElParser {
         }
 
         let js = array.join("");
+
+        if (!nullish) {
+            if (array.filter(v => /\S/.test(v)).length > 1) {
+                js = `(${js})`;
+            }
+            js = `${js} ?? ""`;
+        }
+
         if (postfilter) js = postfilter(js);
 
         return js;

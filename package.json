@@ -1,19 +1,19 @@
 {
   "name": "nsp-server-pages",
   "description": "NSP JavaScript Server Pages for Node.js",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "author": "@kawanet",
   "bugs": {
     "url": "https://github.com/kawanet/nsp-server-pages/issues"
   },
   "dependencies": {
-    "async-cache-queue": "^0.2.7",
-    "to-xml": "^0.1.10"
+    "async-cache-queue": "^0.2.8",
+    "to-xml": "^0.1.11"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^15.2.0",
+    "@rollup/plugin-node-resolve": "^15.2.1",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^20.5.1",
+    "@types/node": "^20.5.3",
     "mocha": "^10.2.0",
     "typescript": "^5.1.6"
   },

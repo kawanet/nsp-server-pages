@@ -23,7 +23,7 @@ describe(TITLE, () => {
         // just ignored per default
         assert.equal(nsp.parse(`[<%! foo = "FOO"; %>]`).toFn()(v), "[]");
 
-        nsp.on("declaration", () => "declaration");
+        nsp.hook("declaration", () => "declaration");
 
         assert.equal(nsp.parse(`[<%! foo = "FOO"; %>]`).toFn()(v), "[declaration]");
 
@@ -35,7 +35,7 @@ describe(TITLE, () => {
         // just ignored per default
         assert.equal(nsp.parse(`[<%@ include %>]`).toFn()(v), "[]");
 
-        nsp.on("directive", () => "directive");
+        nsp.hook("directive", () => "directive");
 
         assert.equal(nsp.parse(`[<%@ page %>]`).toFn()(v), "[directive]");
 
@@ -56,7 +56,7 @@ describe(TITLE, () => {
         // just ignored per default
         assert.equal(nsp.parse(`[<% bar = "BAR"; %>]`).toFn()(v), "[]");
 
-        nsp.on("scriptlet", () => "scriptlet");
+        nsp.hook("scriptlet", () => "scriptlet");
 
         assert.equal(nsp.parse(`[<% bar = "BAR"; %>]`).toFn()(v), "[scriptlet]");
 

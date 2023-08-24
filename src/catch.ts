@@ -6,6 +6,10 @@ const isPromise = <T>(v: any): v is Promise<T> => v && (typeof v.catch === "func
 
 const escapeError = (e: Error): string => toXML({"#": (e?.message || String(e))});
 
+interface TagData {
+    error?: Error;
+}
+
 export const catchFn = <T>(app: NSP.App, fn: NSP.NodeFn<T>): NSP.NodeFn<T> => {
     return context => {
         try {
@@ -20,11 +24,18 @@ export const catchFn = <T>(app: NSP.App, fn: NSP.NodeFn<T>): NSP.NodeFn<T> => {
         }
 
         function errorHandler(e: Error): string {
-            const result = app.emit("error", e, context);
-            if (result == null) {
-                return `<!--\n[ERR] ${escapeError(e)}\n-->`;
+            // just throw the error if it's already handled
+            if (context != null) {
+                const data = app.store<TagData>(context, "error", () => ({}));
+                if (data.error === e) throw e;
+                data.error = e;
             }
-            return result as string;
+
+            // call the error handler
+            const result = app.process("error", e, context);
+            if (result != null) return result as string;
+
+            return `<!--\n[ERR] ${escapeError(e)}\n-->`;
         }
     }
 };
