@@ -11,7 +11,7 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "module": "commonjs",
-    "moduleResolution": "nodenext",
+    "moduleResolution": "node",
     "noImplicitAny": true,
     "noImplicitReturns": false,
     "noImplicitThis": true,
