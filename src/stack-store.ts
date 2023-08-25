@@ -1,6 +1,12 @@
 export class StackStore<P> implements StackStore<P> {
     protected stack: P[] = [];
 
+    constructor(value?: P) {
+        if (arguments.length) {
+            this.set(value);
+        }
+    }
+
     open(value?: P): void {
         this.stack.unshift(value);
     }

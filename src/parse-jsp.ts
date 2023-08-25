@@ -3,6 +3,7 @@ import type {NSP} from "../index.js"
 import {parseText} from "./parse-text.js";
 import {parseAttr} from "./parse-attr.js";
 import {parseScriptlet} from "./parse-scriptlet.js";
+import {StackStore} from "./stack-store.js";
 
 const emptyText: { [str: string]: boolean } = {
     '""': true,
@@ -118,43 +119,6 @@ class Element {
     }
 }
 
-/**
- * Tree of elements
- */
-class Tree {
-    protected tree: Element[] = [];
-
-    constructor(protected root: Element) {
-        this.tree.push(root);
-    }
-
-    append(node: string | ChildNode): void {
-        this.tree.at(0).append(node);
-    }
-
-    open(node: Element): void {
-        this.append(node);
-        this.tree.unshift(node);
-    }
-
-    close(tagName: string): void {
-        const openTag = this.getTagName();
-        if (openTag !== tagName) {
-            throw new Error(`mismatch closing tag: ${openTag} !== ${tagName}`);
-        }
-
-        this.tree.shift();
-    }
-
-    getTagName(): string {
-        return this.tree.at(0).tagName;
-    }
-
-    isRoot(): boolean {
-        return this.tree.length === 1;
-    }
-}
-
 class JspParser implements NSP.Parser {
     constructor(protected app: NSP.App, protected src: string) {
         //
@@ -194,7 +158,7 @@ const tagRegExp = new RegExp(`(</?${nameRE}:(?:${insideRE})*?>)|(<%(?:${insideRE
 
 export const jspToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): string => {
     const root = new Element(app);
-    const tree = new Tree(root);
+    const tree = new StackStore<Element>(root);
     const array = src.split(tagRegExp);
 
     for (let i = 0; i < array.length; i++) {
@@ -204,31 +168,42 @@ export const jspToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): stri
         if (i3 === 1 && str) {
             // taglib
             const tagName = str.match(/^<\/?([^\s=/>]+)/)?.[1];
+
+            // close-tag
             if (/^<\//.test(str)) {
-                tree.close(tagName);
+                const closed = tree.close();
+                if (!closed) {
+                    throw new Error(`invalid closing tag: </${tagName}>`);
+                }
+
+                if (closed.tagName !== tagName) {
+                    throw new Error(`invalid closing tag: <${closed.tagName}></${tagName}>`);
+                }
                 continue;
             }
 
             const element = new Element(app, tagName, str);
-            if (/\/\s*>$/.test(str)) {
-                tree.append(element);
-            } else {
+            tree.get().append(element);
+
+            // open-tag
+            if (!/\/\s*>$/.test(str)) {
                 tree.open(element);
             }
         } else if (i3 === 2 && str) {
 
             // <% scriptlet %>
             const item = parseScriptlet(app, str);
-            tree.append(item);
+            tree.get().append(item);
 
         } else if (i3 === 0) {
             // text node
-            tree.append(str);
+            tree.get().append(str);
         }
     }
 
-    if (!tree.isRoot()) {
-        throw new Error("missing closing tag: " + tree.getTagName());
+    const closed = tree.close();
+    if (closed !== root) {
+        throw new Error(`invalid closing tag: </${closed?.tagName}>`);
     }
 
     return root.toJS(option);
