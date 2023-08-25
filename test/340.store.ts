@@ -11,12 +11,6 @@ interface CTX {
     //
 }
 
-interface Data {
-    counter: number;
-}
-
-const storeKey = "test:tag1";
-
 describe(TITLE, () => {
     const nsp = createNSP({nullish: true});
 
@@ -25,9 +19,10 @@ describe(TITLE, () => {
         tag: {
             counter: (tag: NSP.TagDef<ATTR, CTX>) => {
                 return (v: CTX) => {
-                    const obj = tag.app.store<Data>(v, storeKey, () => ({counter: 0}));
-                    obj.counter++;
-                    return String(obj.counter);
+                    const store = tag.app.store<number>(v, "test:tag1");
+                    const counter = (store.get() ?? 0) + 1;
+                    store.set(counter);
+                    return String(counter);
                 };
             }
         },

@@ -7,6 +7,7 @@ import {catchFn} from "./catch.js";
 import {bundle} from "./bundle.js";
 import {addTagLib, prepareTag} from "./taglib.js";
 import {concat} from "./concat.js";
+import {StackStore} from "./stack-store.js";
 
 export const createNSP = (options?: NSP.Options): NSP.App => new App(options);
 
@@ -94,7 +95,7 @@ class App implements NSP.App {
         return loader.load<T>(file);
     }
 
-    store<S>(context: any, key: string, initFn?: () => S): S {
+    store<S>(context: any, key: string): S {
         if ("object" !== typeof context && context == null) {
             throw new Error("Context must be an object");
         }
@@ -104,7 +105,7 @@ class App implements NSP.App {
 
         let value = map.get(key);
         if (value == null) {
-            value = initFn();
+            value = new StackStore();
             map.set(key, value);
         }
         return value;

@@ -162,7 +162,7 @@ declare namespace NSP {
         /**
          * get a private data store in context
          */
-        store<S>(context: any, key: string, initFn?: () => S): S;
+        store<P>(context: any, key: string): StackStore<P>;
 
         /**
          * generates a NodeFn for the tag
@@ -185,6 +185,33 @@ declare namespace NSP {
          * tags
          */
         tag?: { [name: string]: TagFn<any> };
+    }
+
+    interface StackStore<P> {
+        /**
+         * set value to the store
+         */
+        set(value: P): void;
+
+        /**
+         * get value from the store
+         */
+        get(): P;
+
+        /**
+         * open a new layer
+         */
+        open(value?: P): void;
+
+        /**
+         * close the current layer
+         */
+        close(): P;
+
+        /**
+         * find a value from layers with the test function
+         */
+        find(test: (data: P) => boolean): P;
     }
 
     interface ToJSOption {
