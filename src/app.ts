@@ -81,17 +81,17 @@ class App implements NSP.App {
     }
 
     loadJS<T = any>(file: string): Promise<NSP.NodeFn<T>> {
-        const loader = this.jsLoader || (this.jsLoader = new JsLoader(this));
+        const loader = (this.jsLoader ??= new JsLoader(this));
         return loader.load<T>(file);
     }
 
     loadJSP<T = any>(file: string): Promise<NSP.NodeFn<T>> {
-        const loader = this.jspLoader || (this.jspLoader = new JspLoader(this));
+        const loader = (this.jspLoader ??= new JspLoader(this));
         return loader.load<T>(file);
     }
 
     loadFile<T = any>(file: string): Promise<NSP.NodeFn<T>> {
-        const loader = this.fileLoader || (this.fileLoader = new FileLoader(this));
+        const loader = (this.fileLoader ??= new FileLoader(this));
         return loader.load<T>(file);
     }
 
@@ -101,7 +101,7 @@ class App implements NSP.App {
         }
 
         const {storeKey} = this.options;
-        const map = (context[storeKey] as Map<string, StackStore<any>>) || (context[storeKey] = new Map<string, StackStore<any>>());
+        const map = (context[storeKey] ??= new Map()) as Map<string, StackStore<any>>;
 
         let value: StackStore<P> = map.get(key);
         if (value == null) {
