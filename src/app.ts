@@ -95,17 +95,17 @@ class App implements NSP.App {
         return loader.load<T>(file);
     }
 
-    store<S>(context: any, key: string): S {
+    store<P>(context: any, key: string): StackStore<P> {
         if ("object" !== typeof context && context == null) {
             throw new Error("Context must be an object");
         }
 
         const {storeKey} = this.options;
-        const map = context[storeKey] || (context[storeKey] = new Map());
+        const map = (context[storeKey] as Map<string, StackStore<any>>) || (context[storeKey] = new Map<string, StackStore<any>>());
 
-        let value = map.get(key);
+        let value: StackStore<P> = map.get(key);
         if (value == null) {
-            value = new StackStore();
+            value = new StackStore<P>();
             map.set(key, value);
         }
         return value;
