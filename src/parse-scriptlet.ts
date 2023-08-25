@@ -1,7 +1,5 @@
 import type {NSP} from "../index.js"
 
-import {parseEL} from "./parse-el.js";
-
 /**
  * Parser for Directive, Declaration, Scriptlet
  * <%-- comment --%>
@@ -60,13 +58,6 @@ class ScriptletParser {
         if (type === "comment") {
             src = src.replace(/[ \t]*[\r\n]+/sg, `${currentLF}// `);
             return `// ${src}`;
-        }
-
-        if (type === "expression") {
-            src = src.replace(/^<%=\s*/s, "");
-            src = src.replace(/\s*%>$/s, "");
-            src = parseEL(app, src).toJS(option);
-            return `${vName} => (${src})`;
         }
 
         app.log(`${type} found: ${src?.substring(0, 1000)}`);

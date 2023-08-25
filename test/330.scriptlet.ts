@@ -44,11 +44,14 @@ describe(TITLE, () => {
 
     // <%= expression %>
     it("expression", () => {
-        // nsp.on("expression", () => "expression");
+        // just ignored per default
+        assert.equal(nsp.parse(`[<%= expression1 %>]`).toFn()(v), "[]");
 
-        assert.equal(nsp.parse(`[<%= buz %>]`).toFn()({buz: "BUZ"}), "[BUZ]");
+        nsp.hook("expression", () => "expression removed");
 
-        assert.equal(parseScriptlet(nsp, `<%= qux %>`).toFn()({qux: "QUX"}), "QUX");
+        assert.equal(nsp.parse(`[<%= expression2 %>]`).toFn()(v), "[expression removed]");
+
+        assert.equal(parseScriptlet(nsp, `<%= expression3 %>`).toFn()(v), "expression removed");
     });
 
     // <% scriptlet %>
