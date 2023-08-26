@@ -46,7 +46,7 @@ class ElParser {
     /**
      * Transpile ${EL} to JavaScript source code
      */
-    toJS(_?: NSP.ToJSOption) {
+    toJS(_: NSP.ToJSOption) {
         const {app} = this;
         const {nullish, prefilter, postfilter} = app.options;
 

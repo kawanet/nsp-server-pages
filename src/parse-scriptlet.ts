@@ -25,7 +25,7 @@ class ScriptletParser {
     /**
      * Transpile <% scriptlet %> to JavaScript source code
      */
-    toJS(option?: NSP.ToJSOption): string {
+    toJS(option: NSP.ToJSOption): string {
         const {app} = this;
         const {nspName, vName} = app.options;
 

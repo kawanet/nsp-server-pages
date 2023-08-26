@@ -15,7 +15,7 @@ class AttrParser {
     /**
      * Transpile HTML tag attributes to JavaScript source code
      */
-    toJS(option?: NSP.ToJSOption): string {
+    toJS(option: NSP.ToJSOption): string {
         return attrToJS(this.app, this.src, option);
     }
 }

@@ -33,7 +33,7 @@ class TextParser {
     /**
      * Transpile ${expression} and <% scriptlet %> to JavaScript source code
      */
-    toJS(option?: NSP.ToJSOption) {
+    toJS(option: NSP.ToJSOption) {
         return textToJS(this.app, this.src, option);
     }
 }
