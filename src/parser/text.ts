@@ -24,15 +24,19 @@ const bodyRegExp = new RegExp(bodyRE, "s");
  * Parser for: text content
  */
 export class Text {
-    constructor(protected app: NSP.App, protected src: string) {
-        //
+    protected src: string;
+
+    constructor(protected app: NSP.App, src: string) {
+        this.src = app.process<string>("before.parse.text", src) ?? src;
     }
 
     /**
      * Transpile ${expression} and <% scriptlet %> to JavaScript source code
      */
     toJS(option: NSP.ToJSOption) {
-        return textToJS(this.app, this.src, option);
+        const {app, src} = this;
+        const js = app.process<string>("parse.text", src) ?? textToJS(app, src, option);
+        return app.process<string>("after.parse.text", js) ?? js;
     }
 }
 

@@ -7,8 +7,10 @@ import {Tag} from "./tag.js";
  * Parser for JSP document
  */
 export class JSP implements NSP.Parser {
-    constructor(protected app: NSP.App, protected src: string) {
-        //
+    protected src: string;
+
+    constructor(protected app: NSP.App, src: string) {
+        this.src = app.process<string>("before.parse.jsp", src) ?? src;
     }
 
     /**
@@ -16,7 +18,8 @@ export class JSP implements NSP.Parser {
      */
     toJS(option?: NSP.ToJSOption) {
         const {app, src} = this;
-        return jspToJS(app, src, option);
+        const js = app.process<string>("parse.jsp", src) ?? jspToJS(app, src, option);
+        return app.process<string>("after.parse.jsp", js) ?? js;
     }
 
     /**

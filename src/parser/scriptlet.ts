@@ -18,15 +18,25 @@ const typeMap: { [key: string]: string } = {
  * <%= expression %>
  */
 export class Scriptlet {
-    constructor(protected app: NSP.App, protected src: string) {
-        //
+    protected src: string;
+    protected type: string;
+
+    constructor(protected app: NSP.App, src: string) {
+        const type = this.type = typeMap[src.substring(0, 3)] || "scriptlet";
+        this.src = app.process<string>(`before.parse.${type}`, src) ?? src;
     }
 
     /**
      * Transpile <% scriptlet %> to JavaScript source code
      */
-    toJS(option: NSP.ToJSOption): string {
-        const {app} = this;
+    toJS(option: NSP.ToJSOption) {
+        const {app, src, type} = this;
+        const js = app.process<string>(`parse.${type}`, src) ?? this._toJS(option);
+        return app.process<string>(`after.parse.${type}`, js) ?? js;
+    }
+
+    private _toJS(option: NSP.ToJSOption): string {
+        const {app, type} = this;
         const {nspName, vName} = app.options;
 
         const currentIndent = +option?.currentIndent || 0;
@@ -34,7 +44,6 @@ export class Scriptlet {
 
         let {src} = this;
 
-        const type = typeMap[src.substring(0, 3)] || "scriptlet";
         if (type === "comment") {
             src = src.replace(/[ \t]*[\r\n]+/sg, `${currentLF}// `);
             return `// ${src}`;

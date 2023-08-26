@@ -37,19 +37,26 @@ const itemRegExp = new RegExp(`(${itemRE})`, "s");
  * Simplified transformer for expression language
  */
 export class EL {
-    constructor(protected app: NSP.App, protected src: string) {
-        //
+    protected src: string;
+
+    constructor(protected app: NSP.App, src: string) {
+        src = trim(src);
+        this.src = app.process<string>("before.parse.el", src) ?? src;
     }
 
     /**
      * Transpile ${EL} to JavaScript source code
      */
-    toJS(_: NSP.ToJSOption) {
-        const {app} = this;
-        const {nullish, prefilter, postfilter} = app.options;
+    toJS(option: NSP.ToJSOption) {
+        const {app, src} = this;
+        const js = app.process<string>("parse.el", src) ?? this._toJS(option);
+        return app.process<string>("after.parse.el", js) ?? js;
+    }
 
-        let src = trim(this.src);
-        if (prefilter) src = prefilter(src);
+    private _toJS(_: NSP.ToJSOption) {
+        const {app, src} = this;
+        const {nullish} = app.options;
+
         if (src == null) return 'null';
 
         const array = src.split(itemRegExp);
@@ -87,8 +94,6 @@ export class EL {
             }
             js = `${js} ?? ""`;
         }
-
-        if (postfilter) js = postfilter(js);
 
         return js;
     }

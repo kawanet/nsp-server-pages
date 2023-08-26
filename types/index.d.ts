@@ -74,16 +74,6 @@ declare namespace NSP {
          * @default false
          */
         nullish?: boolean;
-
-        /**
-         * expression filter before transpile starts
-         */
-        prefilter?: (src: string) => string;
-
-        /**
-         * expression filter after transpile done
-         */
-        postfilter?: (src: string) => string;
     }
 
     interface App {

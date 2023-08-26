@@ -8,15 +8,19 @@ const LF = (indent: number) => (+indent ? "\n" + " ".repeat(indent) : "\n");
  * Parser for HTML tag attributes <tagName attr="value"/>
  */
 export class Attr {
-    constructor(protected app: NSP.App, protected src: string) {
-        //
+    protected src: string;
+
+    constructor(protected app: NSP.App, src: string) {
+        this.src = app.process<string>("before.parse.attr", src) ?? src;
     }
 
     /**
      * Transpile HTML tag attributes to JavaScript source code
      */
     toJS(option: NSP.ToJSOption): string {
-        return attrToJS(this.app, this.src, option);
+        const {app, src} = this;
+        const js = app.process<string>("parse.attr", src) ?? attrToJS(app, src, option);
+        return app.process<string>("after.parse.attr", js) ?? js;
     }
 }
 
