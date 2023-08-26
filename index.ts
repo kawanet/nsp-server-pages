@@ -1,5 +1,6 @@
-import type {NSP} from "./types/index.js";
+import {App} from "./src/app.js";
+import type * as types from "./types/index.js";
 
-import {createNSP} from "./src/app.js";
+export type {NSP} from "./types/index.js";
 
-export {createNSP, NSP};
+export const createNSP: typeof types.createNSP = (options) => new App(options);

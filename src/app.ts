@@ -9,9 +9,7 @@ import {addTagLib, prepareTag} from "./taglib.js";
 import {concat} from "./concat.js";
 import {StackStore} from "./stack-store.js";
 
-export const createNSP = (options?: NSP.Options): NSP.App => new App(options);
-
-class App implements NSP.App {
+export class App implements NSP.App {
     loaders: NSP.LoaderFn[] = [];
     tagMap = new Map<string, NSP.TagFn<any>>();
     fnMap = new Map<string, (...args: any[]) => any>();
