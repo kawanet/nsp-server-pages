@@ -1,14 +1,12 @@
 import type {NSP} from "../../index.js";
-import {parseScriptlet} from "./scriptlet.js";
+import {Scriptlet} from "./scriptlet.js";
 import {StackStore} from "../stack-store.js";
-import {TagParser} from "./tag.js";
+import {Tag} from "./tag.js";
 
 /**
  * Parser for JSP document
  */
-export const parseJSP = (app: NSP.App, src: string): NSP.Parser => new JspParser(app, src);
-
-class JspParser implements NSP.Parser {
+export class JSP implements NSP.Parser {
     constructor(protected app: NSP.App, protected src: string) {
         //
     }
@@ -46,8 +44,8 @@ const insideRE = `[^"']|${stringRE}`;
 const tagRegExp = new RegExp(`(</?${nameRE}:(?:${insideRE})*?>)|(<%(?:${insideRE})*?%>)`, "s");
 
 export const jspToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): string => {
-    const root = new TagParser(app);
-    const tree = new StackStore<TagParser>(root);
+    const root = new Tag(app);
+    const tree = new StackStore<Tag>(root);
     const array = src.split(tagRegExp);
 
     for (let i = 0; i < array.length; i++) {
@@ -56,7 +54,7 @@ export const jspToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): stri
 
         if (i3 === 1 && str) {
             // taglib
-            const tag = new TagParser(app, str);
+            const tag = new Tag(app, str);
 
             // close-tag
             if (tag.isClose()) {
@@ -80,7 +78,7 @@ export const jspToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): stri
         } else if (i3 === 2 && str) {
 
             // <% scriptlet %>
-            const item = parseScriptlet(app, str);
+            const item = new Scriptlet(app, str);
             tree.get().append(item);
 
         } else if (i3 === 0) {

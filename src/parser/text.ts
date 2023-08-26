@@ -1,7 +1,7 @@
 import type {NSP} from "../../index.js";
 
-import {parseEL} from "./el.js";
-import {parseScriptlet} from "./scriptlet.js";
+import {EL} from "./el.js";
+import {Scriptlet} from "./scriptlet.js";
 
 /**
  * escape special characters in Template Literal
@@ -23,9 +23,7 @@ const bodyRegExp = new RegExp(bodyRE, "s");
 /**
  * Parser for: text content
  */
-export const parseText = (app: NSP.App, src: string) => new TextParser(app, src);
-
-class TextParser {
+export class Text {
     constructor(protected app: NSP.App, protected src: string) {
         //
     }
@@ -59,7 +57,7 @@ const textToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): string => 
             value = value.replace(/^[$#]\{\s*/s, "");
             value = value.replace(/\s*}$/s, "");
 
-            const item = parseEL(app, value);
+            const item = new EL(app, value);
             if (isAsync) {
                 items.push({toJS: (option) => `await ${item.toJS(option)}`});
             } else {
@@ -69,7 +67,7 @@ const textToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): string => 
         } else if (i3 === 2) {
 
             // <% scriptlet %>
-            const item = parseScriptlet(app, value);
+            const item = new Scriptlet(app, value);
             items.push(item);
 
         } else {

@@ -2,6 +2,13 @@ import type {NSP} from "../../index.js";
 
 const LF = (indent: number) => (+indent ? "\n" + " ".repeat(indent) : "\n");
 
+const typeMap: { [key: string]: string } = {
+    "<%-": "comment",
+    "<%@": "directive",
+    "<%!": "declaration",
+    "<%=": "expression",
+};
+
 /**
  * Parser for Directive, Declaration, Scriptlet
  * <%-- comment --%>
@@ -10,16 +17,7 @@ const LF = (indent: number) => (+indent ? "\n" + " ".repeat(indent) : "\n");
  * <% scriptlet %>
  * <%= expression %>
  */
-export const parseScriptlet = (app: NSP.App, src: string) => new ScriptletParser(app, src);
-
-const typeMap: { [key: string]: string } = {
-    "<%-": "comment",
-    "<%@": "directive",
-    "<%!": "declaration",
-    "<%=": "expression",
-};
-
-class ScriptletParser {
+export class Scriptlet {
     constructor(protected app: NSP.App, protected src: string) {
         //
     }

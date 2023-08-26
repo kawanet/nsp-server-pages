@@ -36,9 +36,7 @@ const itemRegExp = new RegExp(`(${itemRE})`, "s");
 /**
  * Simplified transformer for expression language
  */
-export const parseEL = (app: NSP.App, src: string) => new ElParser(app, src);
-
-class ElParser {
+export class EL {
     constructor(protected app: NSP.App, protected src: string) {
         //
     }

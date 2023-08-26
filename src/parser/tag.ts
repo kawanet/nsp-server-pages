@@ -1,7 +1,7 @@
 import type {NSP} from "../../index.js";
 
-import {parseText} from "./text.js";
-import {parseAttr} from "./attr.js";
+import {Text} from "./text.js";
+import {Attr} from "./attr.js";
 
 const emptyText: { [str: string]: boolean } = {
     '""': true,
@@ -21,7 +21,7 @@ const LF = (indent: number) => (+indent ? "\n" + " ".repeat(indent) : "\n");
 /**
  * Root node or an taglib node
  */
-export class TagParser {
+export class Tag {
     public tagName: string;
 
     protected children: (string | ChildNode)[] = [];
@@ -71,7 +71,7 @@ export class TagParser {
                     item = item.replace(/[ \t]+$/s, " ");
                 }
 
-                let js = parseText(app, item).toJS({currentIndent: nextIndent});
+                let js = new Text(app, item).toJS({currentIndent: nextIndent});
                 if (/\(.+?\)|\$\{.+?}/s.test(js)) {
                     js = `${vName} => ${js}`; // array function
                 }
@@ -109,7 +109,7 @@ export class TagParser {
         }
 
         // attributes as the second argument
-        let attr = parseAttr(app, src).toJS({currentIndent: args.length ? nextIndent : currentIndent});
+        let attr = new Attr(app, src).toJS({currentIndent: args.length ? nextIndent : currentIndent});
         if (/\(.+?\)|\$\{.+?}/s.test(attr)) {
             attr = `${vName} => (${attr})`; // array function
         }

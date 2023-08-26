@@ -2,7 +2,7 @@ import type {NSP} from "../index.js";
 
 import {load, mount} from "./mount.js";
 import {FileLoader, JsLoader, JspLoader} from "./loaders.js";
-import {parseJSP} from "./parser/jsp.js";
+import {JSP} from "./parser/jsp.js";
 import {catchFn} from "./catch.js";
 import {bundle} from "./bundle.js";
 import {addTagLib, prepareTag} from "./taglib.js";
@@ -67,7 +67,7 @@ export class App implements NSP.App {
     }
 
     parse(src: string): NSP.Parser {
-        return parseJSP(this, src);
+        return new JSP(this, src);
     }
 
     mount(path: RegExp | string, fn: NSP.LoaderFn): void {

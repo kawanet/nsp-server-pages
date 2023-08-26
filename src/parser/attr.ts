@@ -1,15 +1,13 @@
 import type {NSP} from "../../index.js";
 
-import {parseText} from "./text.js";
+import {Text} from "./text.js";
 
 const LF = (indent: number) => (+indent ? "\n" + " ".repeat(indent) : "\n");
 
 /**
  * Parser for HTML tag attributes <tagName attr="value"/>
  */
-export const parseAttr = (app: NSP.App, src: string) => new AttrParser(app, src);
-
-class AttrParser {
+export class Attr {
     constructor(protected app: NSP.App, protected src: string) {
         //
     }
@@ -52,7 +50,7 @@ const attrToJS = (app: NSP.App, tag: string, option: NSP.ToJSOption): string => 
         }
 
         if ("string" === typeof value) {
-            value = parseText(app, value).toJS({currentIndent: nextIndent});
+            value = new Text(app, value).toJS({currentIndent: nextIndent});
         }
 
         return `${key}: ${value}`;
