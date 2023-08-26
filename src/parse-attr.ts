@@ -2,6 +2,8 @@ import type {NSP} from "../index.js"
 
 import {parseText} from "./parse-text.js";
 
+const LF = (indent: number) => (+indent ? "\n" + " ".repeat(indent) : "\n");
+
 /**
  * Parser for HTML tag attributes <tagName attr="value"/>
  */
@@ -30,8 +32,8 @@ const attrToJS = (app: NSP.App, tag: string, option: NSP.ToJSOption): string => 
     const indent = +app.options.indent || 0;
     const currentIndent = +option?.currentIndent || 0;
     const nextIndent = currentIndent + indent;
-    const currentLF = currentIndent ? "\n" + " ".repeat(currentIndent) : "\n";
-    const nextLF = nextIndent ? "\n" + " ".repeat(nextIndent) : "\n";
+    const currentLF = LF(currentIndent);
+    const nextLF = LF(nextIndent);
 
     const keys: string[] = [];
     const index: { [key: string]: string | boolean } = {};

@@ -1,5 +1,7 @@
 import type {NSP} from "../index.js"
 
+const LF = (indent: number) => (+indent ? "\n" + " ".repeat(indent) : "\n");
+
 /**
  * Parser for Directive, Declaration, Scriptlet
  * <%-- comment --%>
@@ -30,7 +32,7 @@ class ScriptletParser {
         const {nspName, vName} = app.options;
 
         const currentIndent = +option?.currentIndent || 0;
-        const currentLF = currentIndent ? "\n" + " ".repeat(currentIndent) : "\n";
+        const currentLF = LF(currentIndent);
 
         let {src} = this;
 

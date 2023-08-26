@@ -18,6 +18,8 @@ type ChildNode = { toJS: (option?: NSP.ToJSOption) => string };
 
 const isElement = (node: any): node is  ChildNode => ("function" === typeof node?.toJS);
 
+const LF = (indent: number) => (+indent ? "\n" + " ".repeat(indent) : "\n");
+
 /**
  * Parser for JSP document
  */
@@ -47,8 +49,8 @@ class Element {
         const indent = +app.options.indent || 0;
         const currentIndent = +option?.currentIndent || 0;
         const nextIndent = currentIndent + indent;
-        const currentLF = currentIndent ? "\n" + " ".repeat(currentIndent) : "\n";
-        const nextLF = nextIndent ? "\n" + " ".repeat(nextIndent) : "\n";
+        const currentLF = LF(currentIndent);
+        const nextLF = LF(nextIndent);
 
         const {children} = this;
 
