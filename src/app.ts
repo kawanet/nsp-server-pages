@@ -11,8 +11,8 @@ import {StackStore} from "./stack-store.js";
 
 export class App implements NSP.App {
     loaders: NSP.LoaderFn[] = [];
-    tagMap = new Map<string, NSP.TagFn<any>>();
-    fnMap = new Map<string, (...args: any[]) => any>();
+    protected tagMap = new Map<string, NSP.TagFn<any>>();
+    protected fnMap = new Map<string, (...args: any[]) => any>();
     options: NSP.Options;
 
     protected hooks = new Map<string, (...args: any[]) => any>;
@@ -52,12 +52,12 @@ export class App implements NSP.App {
     }
 
     addTagLib(tagLibDef: NSP.TagLibDef): void {
-        addTagLib(this, tagLibDef);
+        addTagLib.call(this, tagLibDef);
     }
 
     tag<A, T = any>(name: string, attr?: A | NSP.AttrFn<A, T>, ..._: NSP.Node<T>[]): NSP.NodeFn<T> {
         const bodyFn = bundle(arguments, 2);
-        const tagFn = prepareTag(this, name, attr, bodyFn);
+        const tagFn = prepareTag.call(this, name, attr, bodyFn);
         return catchFn(this, tagFn);
     }
 

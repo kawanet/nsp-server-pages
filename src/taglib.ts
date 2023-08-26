@@ -1,9 +1,10 @@
 import {toXML} from "to-xml";
 
 import type {NSP} from "../index.js";
+import type {App} from "./app.js";
 
-export const addTagLib = (app: NSP.App, tagLibDef: NSP.TagLibDef): void => {
-    const {fnMap, tagMap} = app;
+export function addTagLib(this: App, tagLibDef: NSP.TagLibDef): void {
+    const {fnMap, tagMap} = this;
     const {ns, fn, tag} = tagLibDef;
 
     if (fn) {
@@ -19,14 +20,14 @@ export const addTagLib = (app: NSP.App, tagLibDef: NSP.TagLibDef): void => {
     }
 }
 
-export const prepareTag = <A, T = any>(app: NSP.App, name: string, attr: A | NSP.AttrFn<A, T>, body: NSP.NodeFn<T>): NSP.NodeFn<T> => {
-    const {tagMap} = app;
+export function prepareTag<A, T = any>(this: App, name: string, attr: A | NSP.AttrFn<A, T>, body: NSP.NodeFn<T>): NSP.NodeFn<T> {
+    const {tagMap} = this;
 
     const tagFn: NSP.TagFn<A, T> = tagMap.get(name) || defaultTagFn;
 
     const attrFn: NSP.AttrFn<A, T> = !attr ? () => ({} as A) : (typeof attr !== "function") ? () => attr : (attr as NSP.AttrFn<A, T>);
 
-    const tagDef: NSP.TagDef<A, T> = {name, app, attr: attrFn, body};
+    const tagDef: NSP.TagDef<A, T> = {name, app: this, attr: attrFn, body};
 
     return tagFn(tagDef) as NSP.NodeFn<T>;
 }

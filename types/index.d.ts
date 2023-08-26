@@ -87,10 +87,8 @@ declare namespace NSP {
     }
 
     interface App {
-        fnMap: Map<string, (...args: any[]) => any>;
         loaders: LoaderFn[];
         options: Options;
-        tagMap: Map<string, TagFn<any>>;
 
         /**
          * register a tag library
