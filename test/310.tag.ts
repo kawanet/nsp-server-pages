@@ -3,30 +3,23 @@ import {createNSP, NSP} from "../index.js";
 
 const TITLE = "310.tag.ts";
 
-interface ATTR {
-    //
-}
-
-interface CTX {
+interface TagAttr {
     //
 }
 
 describe(TITLE, () => {
     const nsp = createNSP();
-    const attr: ATTR = {};
-    const ctx: CTX = {};
+    const attr: TagAttr = {};
+    const ctx = {};
 
-    nsp.addTagLib({
-        ns: "test",
-        tag: {
-            body: (tag: NSP.TagDef<ATTR, CTX>) => {
-                return async (v: CTX) => {
-                    let body = await tag.body(v);
-                    return (body == null) ? "null" : (body === "") ? "empty" : ("string" === typeof body) ? body : typeof body;
-                };
-            }
-        },
-    });
+    const bodyTag: NSP.TagFn<TagAttr> = (tag) => {
+        return async (context) => {
+            const body = await tag.body(context);
+            return (body == null) ? "null" : (body === "") ? "empty" : ("string" === typeof body) ? body : typeof body;
+        };
+    };
+
+    nsp.addTagLib({ns: "test", tag: {body: bodyTag}});
 
     it("undefined body", async () => {
         assert.equal(await nsp.tag("test:body", attr)(ctx), "null", "none of argments");

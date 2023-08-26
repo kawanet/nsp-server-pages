@@ -1,6 +1,5 @@
 import {strict as assert} from "assert";
 import {createNSP} from "../index.js";
-import {parseScriptlet} from "../src/parse-scriptlet.js";
 
 const TITLE = "330.scriptlet.ts";
 
@@ -14,8 +13,6 @@ describe(TITLE, () => {
         // nsp.on("comment", () => "comment");
 
         assert.equal(nsp.parse(`[<%-- comment --%>]`).toFn()(v), "[]");
-
-        assert.equal(parseScriptlet(nsp, `<%-- comment --%>`).toFn()(v), null);
     });
 
     // <%! declaration(s) %>
@@ -26,8 +23,6 @@ describe(TITLE, () => {
         nsp.hook("declaration", () => "declaration");
 
         assert.equal(nsp.parse(`[<%! foo = "FOO"; %>]`).toFn()(v), "[declaration]");
-
-        assert.equal(parseScriptlet(nsp, `<%! foo = "FOO"; %>`).toFn()(v), "declaration");
     });
 
     // <%@ directive %>
@@ -38,8 +33,6 @@ describe(TITLE, () => {
         nsp.hook("directive", () => "directive");
 
         assert.equal(nsp.parse(`[<%@ page %>]`).toFn()(v), "[directive]");
-
-        assert.equal(parseScriptlet(nsp, `<%@ taglib %>`).toFn()(v), "directive");
     });
 
     // <%= expression %>
@@ -50,8 +43,6 @@ describe(TITLE, () => {
         nsp.hook("expression", () => "expression removed");
 
         assert.equal(nsp.parse(`[<%= expression2 %>]`).toFn()(v), "[expression removed]");
-
-        assert.equal(parseScriptlet(nsp, `<%= expression3 %>`).toFn()(v), "expression removed");
     });
 
     // <% scriptlet %>
@@ -62,7 +53,5 @@ describe(TITLE, () => {
         nsp.hook("scriptlet", () => "scriptlet");
 
         assert.equal(nsp.parse(`[<% bar = "BAR"; %>]`).toFn()(v), "[scriptlet]");
-
-        assert.equal(parseScriptlet(nsp, `<% bar = "BAR"; %>`).toFn()(v), "scriptlet");
     });
 });

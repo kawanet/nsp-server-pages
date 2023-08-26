@@ -3,37 +3,30 @@ import {createNSP, NSP} from "../index.js";
 
 const TITLE = "340.store.ts";
 
-interface ATTR {
-    //
-}
-
-interface CTX {
+interface TagAttr {
     //
 }
 
 describe(TITLE, () => {
     const nsp = createNSP({nullish: true});
 
-    nsp.addTagLib({
-        ns: "test",
-        tag: {
-            counter: (tag: NSP.TagDef<ATTR, CTX>) => {
-                return (v: CTX) => {
-                    const store = tag.app.store<number>(v, "test:tag1");
-                    const counter = (store.get() ?? 0) + 1;
-                    store.set(counter);
-                    return String(counter);
-                };
-            }
-        },
-    });
+    const counterTag: NSP.TagFn<TagAttr> = (tag) => {
+        return (context) => {
+            const store = tag.app.store<number>(context, "test:counter");
+            const counter = (store.get() ?? 0) + 1;
+            store.set(counter);
+            return String(counter);
+        };
+    };
+
+    nsp.addTagLib({ns: "test", tag: {counter: counterTag}});
 
     it("<test:counter/>", async () => {
-        const ctx1: CTX = {};
+        const ctx1 = {};
         assert.equal(nsp.parse('[<test:counter/>]').toFn()(ctx1), "[1]");
         assert.equal(nsp.parse('[<test:counter/>]').toFn()(ctx1), "[2]");
 
-        const ctx2: CTX = {};
+        const ctx2 = {};
         assert.equal(nsp.parse('(<test:counter/>)').toFn()(ctx2), "(1)");
         assert.equal(nsp.parse('(<test:counter/>)').toFn()(ctx2), "(2)");
     });
