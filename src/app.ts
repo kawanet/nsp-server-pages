@@ -33,7 +33,7 @@ export class App implements NSP.App {
 
     process(type: string, ...args: any[]): any {
         const fn = this.hooks.get(type);
-        if (fn) return fn.apply(null, args);
+        if (fn) return fn.apply(this, args);
     }
 
     log(message: string): void {
