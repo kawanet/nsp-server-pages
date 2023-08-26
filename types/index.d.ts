@@ -4,9 +4,11 @@
  * @see https://github.com/kawanet/nsp-server-pages
  */
 
+import type {Hooks} from "./hooks.js";
+
 export const createNSP: (options?: NSP.Options) => NSP.App;
 
-declare namespace NSP {
+export declare namespace NSP {
     type NodeFn<T> = (context: T) => string | Promise<string>;
 
     type Node<T> = string | NodeFn<T>;
@@ -76,7 +78,7 @@ declare namespace NSP {
         nullish?: boolean;
     }
 
-    interface App {
+    interface App extends Hooks {
         options: Options;
 
         /**
@@ -129,17 +131,10 @@ declare namespace NSP {
         mount(path: RegExp | string, fn: LoaderFn): void;
 
         /**
-         * register a hook function
+         * register a hook function. see hooks.d.ts for detail
          */
-        hook(type: "error", fn: (e: Error, context?: any) => string | void): void;
 
-        hook(type: "directive", fn: (src: string, context?: any) => string | void): void;
-
-        hook(type: "declaration", fn: (src: string, context?: any) => string | void): void;
-
-        hook(type: "scriptlet", fn: (src: string, context?: any) => string | void): void;
-
-        hook(type: string, fn: (...args: any[]) => any): void;
+        // hook(type: string, fn: (...args: any[]) => any): void;
 
         /**
          * parse a JSP document
