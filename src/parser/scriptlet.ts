@@ -17,7 +17,7 @@ const typeMap: { [key: string]: string } = {
  * <% scriptlet %>
  * <%= expression %>
  */
-export class Scriptlet {
+export class Scriptlet implements NSP.Transpiler {
     protected src: string;
     protected type: string;
 

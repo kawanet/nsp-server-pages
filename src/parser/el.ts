@@ -36,7 +36,7 @@ const itemRegExp = new RegExp(`(${itemRE})`, "s");
 /**
  * Simplified transformer for expression language
  */
-export class EL {
+export class EL implements NSP.Transpiler {
     protected src: string;
 
     constructor(protected app: NSP.App, src: string) {

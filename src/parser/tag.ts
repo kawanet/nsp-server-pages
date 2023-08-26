@@ -12,25 +12,23 @@ const emptyText: { [str: string]: boolean } = {
     "": true,
 };
 
-type ChildNode = { toJS: (option?: NSP.ToJSOption) => string };
-
-const isElement = (node: any): node is  ChildNode => ("function" === typeof node?.toJS);
+const isTranspiler = (v: any): v is NSP.Transpiler => ("function" === typeof v?.toJS);
 
 const LF = (indent: number) => (+indent ? "\n" + " ".repeat(indent) : "\n");
 
 /**
  * Root node or an taglib node
  */
-export class Tag {
+export class Tag implements NSP.Transpiler {
     public tagName: string;
 
-    protected children: (string | ChildNode)[] = [];
+    protected children: (string | NSP.Transpiler)[] = [];
 
     constructor(protected app: NSP.App, protected src?: string) {
         this.tagName = src?.match(/^<\/?([^\s=/>]+)/)?.[1];
     }
 
-    append(node: string | ChildNode): void {
+    append(node: string | NSP.Transpiler): void {
         this.children.push(node);
     }
 
@@ -58,7 +56,7 @@ export class Tag {
         const {children} = this;
 
         const args = children.map(item => {
-            if (isElement(item)) {
+            if (isTranspiler(item)) {
                 return item.toJS({currentIndent: nextIndent});
             } else if (!/\S/.test(item)) {
                 // item with only whitespace

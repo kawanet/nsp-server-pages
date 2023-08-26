@@ -7,7 +7,7 @@ const LF = (indent: number) => (+indent ? "\n" + " ".repeat(indent) : "\n");
 /**
  * Parser for HTML tag attributes <tagName attr="value"/>
  */
-export class Attr {
+export class Attr implements NSP.Transpiler {
     protected src: string;
 
     constructor(protected app: NSP.App, src: string) {

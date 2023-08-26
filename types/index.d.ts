@@ -205,15 +205,17 @@ declare namespace NSP {
         currentIndent?: number;
     }
 
+    interface Transpiler {
+        /**
+         * transpile to JavaScript source code
+         */
+        toJS(option?: ToJSOption): string;
+    }
+
     /**
      * Parser for JSP document
      */
-    interface Parser {
-        /**
-         * transpile the JSP document to JavaScript source code
-         */
-        toJS(option?: ToJSOption): string;
-
+    interface Parser extends Transpiler {
         /**
          * compile the JSP document as a NodeFn
          */

@@ -23,7 +23,7 @@ const bodyRegExp = new RegExp(bodyRE, "s");
 /**
  * Parser for: text content
  */
-export class Text {
+export class Text implements NSP.Transpiler {
     protected src: string;
 
     constructor(protected app: NSP.App, src: string) {
