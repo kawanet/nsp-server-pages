@@ -1,7 +1,7 @@
 {
   "name": "nsp-server-pages",
   "description": "NSP JavaScript Server Pages for Node.js",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "author": "@kawanet",
   "bugs": {
     "url": "https://github.com/kawanet/nsp-server-pages/issues"
@@ -19,19 +19,20 @@
   },
   "exports": {
     "import": {
-      "types": "./index.d.ts",
-      "default": "./index.js"
+      "types": "./types/index.d.ts",
+      "default": "./esm/index.js"
     },
     "require": "./cjs/index.js"
   },
   "files": [
-    "cjs/index.js",
+    "cjs/*.js",
     "cjs/package.json",
     "cjs/src/*.js",
-    "index.d.ts",
-    "index.js",
-    "package.json",
-    "src/*.js"
+    "esm/*.js",
+    "esm/package.json",
+    "esm/src/*.js",
+    "types/*.d.ts",
+    "package.json"
   ],
   "homepage": "https://github.com/kawanet/nsp-server-pages#readme",
   "keywords": [
@@ -41,7 +42,7 @@
     "taglib"
   ],
   "license": "Apache-2.0",
-  "main": "index.js",
+  "main": "./esm/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kawanet/nsp-server-pages.git"
@@ -54,5 +55,5 @@
   },
   "sideEffects": false,
   "type": "module",
-  "types": "./index.d.ts"
+  "types": "./types/index.d.ts"
 }
