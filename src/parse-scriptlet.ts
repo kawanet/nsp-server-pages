@@ -23,26 +23,6 @@ class ScriptletParser {
     }
 
     /**
-     * Compile <% scriptlet %> to JavaScript function instance
-     */
-    toFn<T>() {
-        const {app} = this;
-        const {nspName} = app.options;
-
-        const js = this.toJS();
-        const isComment = /^\/\/[^\n]*$/s.test(js);
-        if (isComment) return (): string => null;
-
-        try {
-            const fn = Function(nspName, `return ${js}`) as (app: NSP.App) => (v: T) => string;
-            return fn(app);
-        } catch (e) {
-            app.log("ScriptletParser: " + js?.substring(0, 1000));
-            throw e;
-        }
-    }
-
-    /**
      * Transpile <% scriptlet %> to JavaScript source code
      */
     toJS(option?: NSP.ToJSOption): string {

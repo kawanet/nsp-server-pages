@@ -18,24 +18,6 @@ class AttrParser {
     toJS(option?: NSP.ToJSOption): string {
         return attrToJS(this.app, this.src, option);
     }
-
-    /**
-     * Compile HTML tag attributes to JavaScript function instance
-     */
-    toFn<A, T = any>(): NSP.AttrFn<A, T> {
-        const {app} = this;
-        const {nspName, vName} = app.options;
-
-        const js = this.toJS();
-
-        try {
-            const fn = Function(nspName, vName, `return ${js}`) as (app: NSP.App, v: T) => A;
-            return (context: T) => fn(app, context);
-        } catch (e) {
-            app.log("AttrParser: " + js.substring(0, 1000));
-            throw e;
-        }
-    }
 }
 
 /**
