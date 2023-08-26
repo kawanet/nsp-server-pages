@@ -2,7 +2,7 @@ import type {NSP} from "../index.js";
 
 import {load, mount} from "./mount.js";
 import {FileLoader, JsLoader, JspLoader} from "./loaders.js";
-import {parseJSP} from "./parse-jsp.js";
+import {parseJSP} from "./parser/jsp.js";
 import {catchFn} from "./catch.js";
 import {bundle} from "./bundle.js";
 import {addTagLib, prepareTag} from "./taglib.js";

@@ -1,7 +1,7 @@
-import type {NSP} from "../index.js";
-import {parseScriptlet} from "./parse-scriptlet.js";
-import {StackStore} from "./stack-store.js";
-import {TagParser} from "./parse-tag.js";
+import type {NSP} from "../../index.js";
+import {parseScriptlet} from "./scriptlet.js";
+import {StackStore} from "../stack-store.js";
+import {TagParser} from "./tag.js";
 
 /**
  * Parser for JSP document

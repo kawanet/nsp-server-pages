@@ -1,4 +1,4 @@
-import type {NSP} from "../index.js";
+import type {NSP} from "../../index.js";
 
 const LF = (indent: number) => (+indent ? "\n" + " ".repeat(indent) : "\n");
 

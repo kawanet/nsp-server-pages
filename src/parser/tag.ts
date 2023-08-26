@@ -1,7 +1,7 @@
-import type {NSP} from "../index.js";
+import type {NSP} from "../../index.js";
 
-import {parseText} from "./parse-text.js";
-import {parseAttr} from "./parse-attr.js";
+import {parseText} from "./text.js";
+import {parseAttr} from "./attr.js";
 
 const emptyText: { [str: string]: boolean } = {
     '""': true,

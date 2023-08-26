@@ -1,7 +1,7 @@
-import type {NSP} from "../index.js";
+import type {NSP} from "../../index.js";
 
-import {parseEL} from "./parse-el.js";
-import {parseScriptlet} from "./parse-scriptlet.js";
+import {parseEL} from "./el.js";
+import {parseScriptlet} from "./scriptlet.js";
 
 /**
  * escape special characters in Template Literal
