@@ -1,4 +1,4 @@
-import type {NSP} from "../index.js"
+import type {NSP} from "../index.js";
 
 const isPromise = <T>(v: any): v is Promise<T> => v && (typeof v.catch === "function");
 

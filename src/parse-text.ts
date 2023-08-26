@@ -1,4 +1,4 @@
-import type {NSP} from "../index.js"
+import type {NSP} from "../index.js";
 
 import {parseEL} from "./parse-el.js";
 import {parseScriptlet} from "./parse-scriptlet.js";

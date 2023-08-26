@@ -1,4 +1,4 @@
-import type {NSP} from "../index.js"
+import type {NSP} from "../index.js";
 
 import {load, mount} from "./mount.js";
 import {FileLoader, JsLoader, JspLoader} from "./loaders.js";

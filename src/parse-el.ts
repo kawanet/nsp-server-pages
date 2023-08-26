@@ -1,4 +1,4 @@
-import type {NSP} from "../index.js"
+import type {NSP} from "../index.js";
 
 const trim = (str: string) => str.replace(/^\s+/s, "").replace(/\s+$/s, "");
 

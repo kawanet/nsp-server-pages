@@ -1,4 +1,4 @@
-import type {NSP} from "../index.js"
+import type {NSP} from "../index.js";
 
 export const mount = (app: NSP.App, match: RegExp | string, fn: NSP.LoaderFn): void => {
     const test: { test: (path: string) => boolean } = ("string" !== typeof match) ? match : {
