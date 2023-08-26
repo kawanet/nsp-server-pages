@@ -26,24 +26,34 @@ const LF = (indent: number) => (+indent ? "\n" + " ".repeat(indent) : "\n");
 export const parseJSP = (app: NSP.App, src: string): NSP.Parser => new JspParser(app, src);
 
 /**
- * Root element or an taglib element
+ * Root node or an taglib node
  */
-class Element {
+class TagParser {
+    public tagName: string;
+
     protected children: (string | ChildNode)[] = [];
 
-    constructor(protected app: NSP.App, public tagName?: string, protected tagLine?: string) {
-        //
+    constructor(protected app: NSP.App, protected src?: string) {
+        this.tagName = src?.match(/^<\/?([^\s=/>]+)/)?.[1];
     }
 
     append(node: string | ChildNode): void {
         this.children.push(node);
     }
 
+    isOpen(): boolean {
+        return !/\/\s*>$/.test(this.src);
+    }
+
+    isClose(): boolean {
+        return /^<\//.test(this.src);
+    }
+
     /**
      * Transpile JSP document to JavaScript source code
      */
     toJS(option?: NSP.ToJSOption): string {
-        const {app, tagLine} = this;
+        const {app, src} = this;
         const {comment, nspName, trimSpaces, vName} = app.options;
 
         const indent = +app.options.indent || 0;
@@ -106,12 +116,12 @@ class Element {
         }
 
         // attributes as the second argument
-        let attr = parseAttr(app, tagLine).toJS({currentIndent: args.length ? nextIndent : currentIndent});
+        let attr = parseAttr(app, src).toJS({currentIndent: args.length ? nextIndent : currentIndent});
         if (/\(.+?\)|\$\{.+?}/s.test(attr)) {
             attr = `${vName} => (${attr})`; // array function
         }
 
-        const commentV = comment ? `// ${tagLine?.replace(/\s*[\r\n]\s*/g, " ") ?? ""}${currentLF}` : "";
+        const commentV = comment ? `// ${src?.replace(/\s*[\r\n]\s*/g, " ") ?? ""}${currentLF}` : "";
         const nameV = JSON.stringify(tagName);
         const hasAttr = /:/.test(attr);
         const attrV = (hasBody || hasAttr) ? `, ${attr}` : "";
@@ -159,8 +169,8 @@ const insideRE = `[^"']|${stringRE}`;
 const tagRegExp = new RegExp(`(</?${nameRE}:(?:${insideRE})*?>)|(<%(?:${insideRE})*?%>)`, "s");
 
 export const jspToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): string => {
-    const root = new Element(app);
-    const tree = new StackStore<Element>(root);
+    const root = new TagParser(app);
+    const tree = new StackStore<TagParser>(root);
     const array = src.split(tagRegExp);
 
     for (let i = 0; i < array.length; i++) {
@@ -169,27 +179,26 @@ export const jspToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): stri
 
         if (i3 === 1 && str) {
             // taglib
-            const tagName = str.match(/^<\/?([^\s=/>]+)/)?.[1];
+            const tag = new TagParser(app, str);
 
             // close-tag
-            if (/^<\//.test(str)) {
+            if (tag.isClose()) {
                 const closed = tree.close();
                 if (!closed) {
-                    throw new Error(`invalid closing tag: </${tagName}>`);
+                    throw new Error(`invalid closing tag: </${tag.tagName}>`);
                 }
 
-                if (closed.tagName !== tagName) {
-                    throw new Error(`invalid closing tag: <${closed.tagName}></${tagName}>`);
+                if (closed.tagName !== tag.tagName) {
+                    throw new Error(`invalid closing tag: <${closed.tagName}></${tag.tagName}>`);
                 }
                 continue;
             }
 
-            const element = new Element(app, tagName, str);
-            tree.get().append(element);
+            tree.get().append(tag);
 
             // open-tag
-            if (!/\/\s*>$/.test(str)) {
-                tree.open(element);
+            if (tag.isOpen()) {
+                tree.open(tag);
             }
         } else if (i3 === 2 && str) {
 
