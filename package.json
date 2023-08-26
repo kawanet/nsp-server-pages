@@ -27,10 +27,10 @@
   "files": [
     "cjs/*.js",
     "cjs/package.json",
-    "cjs/src/*.js",
+    "cjs/src/**/*.js",
     "esm/*.js",
     "esm/package.json",
-    "esm/src/*.js",
+    "esm/src/**/*.js",
     "types/*.d.ts",
     "package.json"
   ],
