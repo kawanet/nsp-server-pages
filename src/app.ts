@@ -10,15 +10,15 @@ import {concat} from "./concat.js";
 import {StackStore} from "./stack-store.js";
 
 export class App implements NSP.App {
-    loaders: NSP.LoaderFn[] = [];
+    protected loaders: NSP.LoaderFn[] = [];
     protected tagMap = new Map<string, NSP.TagFn<any>>();
     protected fnMap = new Map<string, (...args: any[]) => any>();
-    options: NSP.Options;
-
-    protected hooks = new Map<string, (...args: any[]) => any>;
+    protected hooks = new Map<string, (...args: any[]) => any>();
     protected jsLoader: JsLoader;
     protected jspLoader: JspLoader;
     protected fileLoader: FileLoader;
+
+    options: NSP.Options;
 
     constructor(options?: NSP.Options) {
         this.options = options = Object.create(options || null);
@@ -71,11 +71,11 @@ export class App implements NSP.App {
     }
 
     mount(path: RegExp | string, fn: NSP.LoaderFn): void {
-        return mount(this, path, fn);
+        return mount.call(this, path, fn);
     }
 
     load<T = any>(path: string): Promise<NSP.NodeFn<T>> {
-        return load<T>(this, path);
+        return load.call(this, path);
     }
 
     loadJS<T = any>(file: string): Promise<NSP.NodeFn<T>> {

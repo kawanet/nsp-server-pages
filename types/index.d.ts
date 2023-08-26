@@ -87,7 +87,6 @@ declare namespace NSP {
     }
 
     interface App {
-        loaders: LoaderFn[];
         options: Options;
 
         /**
