@@ -29,7 +29,7 @@ class ScriptletParser {
         const {app} = this;
         const {nspName, vName} = app.options;
 
-        const currentIndent = +option?.indent || 0;
+        const currentIndent = +option?.currentIndent || 0;
         const currentLF = currentIndent ? "\n" + " ".repeat(currentIndent) : "\n";
 
         let {src} = this;

@@ -28,7 +28,7 @@ const attrToJS = (app: NSP.App, tag: string, option: NSP.ToJSOption): string => 
     tag = tag?.replace(/\s*\/?>\s*$/s, "");
 
     const indent = +app.options.indent || 0;
-    const currentIndent = +option?.indent || 0;
+    const currentIndent = +option?.currentIndent || 0;
     const nextIndent = currentIndent + indent;
     const currentLF = currentIndent ? "\n" + " ".repeat(currentIndent) : "\n";
     const nextLF = nextIndent ? "\n" + " ".repeat(nextIndent) : "\n";
@@ -50,7 +50,7 @@ const attrToJS = (app: NSP.App, tag: string, option: NSP.ToJSOption): string => 
         }
 
         if ("string" === typeof value) {
-            value = parseText(app, value).toJS({indent: nextIndent});
+            value = parseText(app, value).toJS({currentIndent: nextIndent});
         }
 
         return `${key}: ${value}`;

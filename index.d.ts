@@ -215,7 +215,7 @@ declare namespace NSP {
     }
 
     interface ToJSOption {
-        indent?: number;
+        currentIndent?: number;
     }
 
     /**

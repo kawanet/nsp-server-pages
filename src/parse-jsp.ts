@@ -45,7 +45,7 @@ class Element {
         const {comment, nspName, trimSpaces, vName} = app.options;
 
         const indent = +app.options.indent || 0;
-        const currentIndent = +option?.indent || 0;
+        const currentIndent = +option?.currentIndent || 0;
         const nextIndent = currentIndent + indent;
         const currentLF = currentIndent ? "\n" + " ".repeat(currentIndent) : "\n";
         const nextLF = nextIndent ? "\n" + " ".repeat(nextIndent) : "\n";
@@ -54,7 +54,7 @@ class Element {
 
         const args = children.map(item => {
             if (isElement(item)) {
-                return item.toJS({indent: nextIndent});
+                return item.toJS({currentIndent: nextIndent});
             } else if (!/\S/.test(item)) {
                 // item with only whitespace
                 return (trimSpaces !== false) ? '""' : JSON.stringify(item);
@@ -66,7 +66,7 @@ class Element {
                     item = item.replace(/[ \t]+$/s, " ");
                 }
 
-                let js = parseText(app, item).toJS({indent: nextIndent});
+                let js = parseText(app, item).toJS({currentIndent: nextIndent});
                 if (/\(.+?\)|\$\{.+?}/s.test(js)) {
                     js = `${vName} => ${js}`; // array function
                 }
@@ -104,7 +104,7 @@ class Element {
         }
 
         // attributes as the second argument
-        let attr = parseAttr(app, tagLine).toJS({indent: args.length ? nextIndent : currentIndent});
+        let attr = parseAttr(app, tagLine).toJS({currentIndent: args.length ? nextIndent : currentIndent});
         if (/\(.+?\)|\$\{.+?}/s.test(attr)) {
             attr = `${vName} => (${attr})`; // array function
         }
