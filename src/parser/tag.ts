@@ -40,12 +40,9 @@ export class Tag implements NSP.Transpiler {
         return /^<\//.test(this.src);
     }
 
-    /**
-     * Transpile JSP document to JavaScript source code
-     */
-    toJS(option?: NSP.ToJSOption): string {
-        const {app, tagName} = this;
-        const {nspName, trimSpaces, vName} = app.options;
+    private childrenToJS(option: NSP.ToJSOption): string {
+        const {app} = this;
+        const {trimSpaces, vName} = app.options;
 
         const indent = +app.options.indent || 0;
         const currentIndent = +option?.currentIndent || 0;
@@ -77,14 +74,15 @@ export class Tag implements NSP.Transpiler {
             }
         }).filter(v => !emptyText[v]);
 
-        const hasBody = !!children.length;
-
-        // keep at least single empty string if all arguments are empty strings
-        if (hasBody && !args.length) {
-            args.push('""');
+        // empty body
+        if (!children.length) {
+            return "";
         }
 
-        const isRoot = !tagName;
+        // keep a single empty string at least if all arguments are trimmed
+        if (!args.length) {
+            args.push('""');
+        }
 
         const last = args.length - 1;
         args.forEach((v, idx) => {
@@ -98,15 +96,28 @@ export class Tag implements NSP.Transpiler {
         });
 
         const bodyL = /^`\n/s.test(args.at(0)) ? "" : nextLF;
-        const bodyR = /(\n`|[)\s])$/s.test(args.at(-1)) ? "" : currentLF;
-        const body = hasBody ? (bodyL + args.join(nextLF) + bodyR) : "";
 
-        if (isRoot) {
+        const bodyR = /(\n`|[)\s])$/s.test(args.at(-1)) ? "" : currentLF;
+
+        return bodyL + args.join(nextLF) + bodyR;
+    }
+
+    /**
+     * Transpile JSP document to JavaScript source code
+     */
+    toJS(option?: NSP.ToJSOption): string {
+        const {app, tagName} = this;
+        const {nspName} = app.options;
+
+        if (this.isClose()) return; // invalid
+
+        const body = this.childrenToJS(option);
+
+        if (tagName) {
+            return this._toJS(option, body); // tag element
+        } else {
             return `${nspName}.bundle(${body})`; // root element
         }
-
-        // TODO
-        return this._toJS(option, body);
     }
 
     private _toJS(option: NSP.ToJSOption, body: string): string {
@@ -126,7 +137,7 @@ export class Tag implements NSP.Transpiler {
         const commentV = comment ? `// ${src?.replace(/\s*[\r\n]\s*/g, " ") ?? ""}${LF(currentIndent)}` : "";
         const nameV = JSON.stringify(tagName);
         const hasAttr = /:/.test(attr);
-        const restV = (body ? (`, ${attr}, ${body}`) : (hasAttr ? `, ${attr}` : "");
+        const restV = body ? (`, ${attr}, ${body}`) : (hasAttr ? `, ${attr}` : "");
 
         return `${commentV}${nspName}.tag(${nameV}${restV})`;
     }
