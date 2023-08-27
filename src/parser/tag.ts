@@ -107,13 +107,12 @@ export class Tag implements NSP.Transpiler {
 
         if (this.isClose()) return; // invalid
 
-        const bodyJS = this.getBodyJS(option);
-
         if (tagName) {
             const commentJS = this.getCommentJS(option);
-            const tagJS = this.getTagJS(option, bodyJS); // tag element
+            const tagJS = this.getTagJS(option); // tag element
             return commentJS ? commentJS + tagJS : tagJS;
         } else {
+            const bodyJS = this.getBodyJS(option);
             return `${nspName}.bundle(${bodyJS})`; // root element
         }
     }
@@ -126,7 +125,7 @@ export class Tag implements NSP.Transpiler {
         return `// ${src?.replace(/\s*[\r\n]\s*/g, " ") ?? ""}${currentLF}`;
     }
 
-    private getTagJS(option: NSP.ToJSOption, bodyJS: string): string {
+    private getTagJS(option: NSP.ToJSOption): string {
         const {app, src, tagName} = this;
         const {indent, nspName, vName} = app.options;
 
@@ -134,15 +133,17 @@ export class Tag implements NSP.Transpiler {
         const currentLF = option?.LF ?? "\n";
         const nextLF = currentLF + spaces;
 
-        // attributes as the second argument
-        let attr = new Attr(app, src).toJS({LF: (bodyJS ? nextLF : currentLF)});
-        if (/\(.+?\)|\$\{.+?}/s.test(attr)) {
-            attr = `${vName} => (${attr})`; // array function
-        }
+        const bodyJS = this.getBodyJS(option);
+
+        const attr = new Attr(app, src).toJS({LF: (bodyJS ? nextLF : currentLF)});
+
+        // transpile attributes to array function if they include variables
+        const hasVars = /\(.+?\)|\$\{.+?}/s.test(attr);
+        const attrJS = hasVars ? `${vName} => (${attr})` : attr;
 
         const nameJS = JSON.stringify(tagName);
         const hasAttr = /:/.test(attr);
-        const restJS = bodyJS ? (`, ${attr}, ${bodyJS}`) : (hasAttr ? `, ${attr}` : "");
+        const restJS = bodyJS ? (`, ${attrJS}, ${bodyJS}`) : (hasAttr ? `, ${attrJS}` : "");
 
         return `${nspName}.tag(${nameJS}${restJS})`;
     }
