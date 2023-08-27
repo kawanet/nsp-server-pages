@@ -103,18 +103,30 @@ export class Tag implements NSP.Transpiler {
      */
     toJS(option?: NSP.ToJSOption): string {
         const {app, tagName} = this;
-        const {nspName} = app.options;
+        const {indent, nspName} = app.options;
 
-        if (this.isClose()) return; // invalid
-
-        if (tagName) {
-            const commentJS = this.getCommentJS(option);
-            const tagJS = this.getTagJS(option); // tag element
-            return commentJS ? commentJS + tagJS : tagJS;
-        } else {
+        // root element
+        if (!tagName) {
             const bodyJS = this.getBodyJS(option);
             return `${nspName}.bundle(${bodyJS})`; // root element
         }
+
+        if (this.isClose()) return; // invalid
+
+        const commentJS = this.getCommentJS(option);
+
+        const attr = new Attr(app, this.src);
+
+        const bodyJS = this.getBodyJS(option);
+
+        const spaces = +indent ? " ".repeat(+indent) : (indent ?? "");
+        const currentLF = option?.LF ?? "\n";
+        const nextLF = currentLF + spaces;
+        const tagOption = {LF: (bodyJS ? nextLF : currentLF)};
+
+        const tagJS = this.getTagJS(attr, bodyJS, tagOption);
+
+        return commentJS ? commentJS + tagJS : tagJS;
     }
 
     private getCommentJS(option: NSP.ToJSOption): string {
@@ -125,18 +137,11 @@ export class Tag implements NSP.Transpiler {
         return `// ${src?.replace(/\s*[\r\n]\s*/g, " ") ?? ""}${currentLF}`;
     }
 
-    private getTagJS(option: NSP.ToJSOption): string {
-        const {app, src, tagName} = this;
-        const {indent, nspName, vName} = app.options;
+    private getTagJS(attr: Attr, bodyJS: string, option: NSP.ToJSOption): string {
+        const {app, tagName} = this;
+        const {nspName, vName} = app.options;
 
-        const spaces = +indent ? " ".repeat(+indent) : (indent ?? "");
-        const currentLF = option?.LF ?? "\n";
-        const nextLF = currentLF + spaces;
-
-        const bodyJS = this.getBodyJS(option);
-
-        const attr = new Attr(app, src);
-        const attrRaw = attr.toJS({LF: (bodyJS ? nextLF : currentLF)});
+        const attrRaw = attr.toJS(option);
 
         // transpile attributes to array function if they include variables
         const hasVars = /\(.+?\)|\$\{.+?}/s.test(attrRaw);
