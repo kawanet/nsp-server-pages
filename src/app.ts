@@ -66,7 +66,7 @@ export class App implements NSP.App {
         return catchFn(this, fn);
     }
 
-    parse(src: string): NSP.Parser {
+    parse(src: string): NSP.JspParser {
         return new JSP(this, src);
     }
 

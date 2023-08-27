@@ -139,7 +139,7 @@ export declare namespace NSP {
         /**
          * parse a JSP document
          */
-        parse(src: string): Parser;
+        parse(src: string): JspParser;
 
         /**
          * get a private data store in context
@@ -210,7 +210,7 @@ export declare namespace NSP {
     /**
      * Parser for JSP document
      */
-    interface Parser extends Transpiler {
+    interface JspParser extends Transpiler {
         /**
          * compile the JSP document as a NodeFn
          */

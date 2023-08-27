@@ -6,7 +6,7 @@ import {Tag} from "./tag.js";
 /**
  * Parser for JSP document
  */
-export class JSP implements NSP.Parser {
+export class JSP implements NSP.JspParser {
     protected src: string;
 
     constructor(protected app: NSP.App, src: string) {
