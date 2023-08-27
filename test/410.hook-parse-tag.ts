@@ -29,17 +29,15 @@ describe(TITLE, () => {
     const nsp = createNSP({indent: 4, nullish: true});
 
     nsp.hook<SetTagAttr>("parse.tag.c:set", tag => {
-        const {indent, vName} = tag.app.options;
-        const spaces = +indent ? " ".repeat(+indent) : (indent ?? "");
-        const currentLF = tag.LF;
-        const nextLF = currentLF + spaces;
+        const {vName} = tag.app.options;
+        const {LF, nextLF} = tag;
 
         const varJS = tag.attr.get("var");
         const isSimple = /^"[A-Za-z]\w*"$/.test(varJS);
         const accessor = isSimple ? "." + JSON.parse(varJS) : `[${varJS}]`;
         const value = tag.attr.get("value");
 
-        return `${vName} => {${nextLF}${vName}${accessor} = ${value};${currentLF}}`;
+        return `${vName} => {${nextLF}${vName}${accessor} = ${value};${LF}}`;
     });
 
     nsp.hook<OutTagAttr>("parse.tag.c:out", tag => {

@@ -223,6 +223,7 @@ export declare namespace NSP {
         attr: AttrParser<A>;
         body: string;
         LF: string;
+        nextLF: string;
     }
 
     interface AttrParser<A> extends Transpiler {
