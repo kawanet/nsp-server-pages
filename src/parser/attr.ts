@@ -29,9 +29,10 @@ const attrToJS = (app: NSP.App, tag: string, option: NSP.ToJSOption): string => 
     tag = tag?.replace(/^\s*<\S+\s*/s, "");
     tag = tag?.replace(/\s*\/?>\s*$/s, "");
 
-    const indent = +app.options.indent || 0;
+    const {indent} = app.options;
+    const spaces = +indent ? " ".repeat(+indent) : (indent ?? "");
     const currentLF = option?.LF ?? "\n";
-    const nextLF = indent ? currentLF + " ".repeat(indent) : currentLF;
+    const nextLF = currentLF + spaces;
 
     const keys: string[] = [];
     const index: { [key: string]: string | boolean } = {};

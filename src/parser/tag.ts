@@ -40,11 +40,11 @@ export class Tag implements NSP.Transpiler {
 
     private childrenToJS(option: NSP.ToJSOption): string {
         const {app} = this;
-        const {trimSpaces, vName} = app.options;
+        const {indent, trimSpaces, vName} = app.options;
 
-        const indent = +app.options.indent || 0;
+        const spaces = +indent ? " ".repeat(+indent) : (indent ?? "");
         const currentLF = option?.LF ?? "\n";
-        const nextLF = indent ? currentLF + " ".repeat(indent) : currentLF;
+        const nextLF = currentLF + spaces;
 
         const {children} = this;
 
@@ -118,11 +118,11 @@ export class Tag implements NSP.Transpiler {
 
     private _toJS(option: NSP.ToJSOption, body: string): string {
         const {app, src, tagName} = this;
-        const {comment, nspName, vName} = app.options;
+        const {comment, indent, nspName, vName} = app.options;
 
-        const indent = +app.options.indent || 0;
+        const spaces = +indent ? " ".repeat(+indent) : (indent ?? "");
         const currentLF = option?.LF ?? "\n";
-        const nextLF = indent ? currentLF + " ".repeat(indent) : currentLF;
+        const nextLF = currentLF + spaces;
 
         // attributes as the second argument
         let attr = new Attr(app, src).toJS({LF: (body ? nextLF : currentLF)});

@@ -54,10 +54,10 @@ export declare namespace NSP {
         storeKey?: string;
 
         /**
-         * indent size for JavaScript source generated
-         * @default 0
+         * indent spaces for JavaScript source generated
+         * @default 0 (no indent)
          */
-        indent?: number;
+        indent?: number | string;
 
         /**
          * add comments at toJS() result
