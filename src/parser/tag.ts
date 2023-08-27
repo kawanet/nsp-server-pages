@@ -135,14 +135,15 @@ export class Tag implements NSP.Transpiler {
 
         const bodyJS = this.getBodyJS(option);
 
-        const attr = new Attr(app, src).toJS({LF: (bodyJS ? nextLF : currentLF)});
+        const attr = new Attr(app, src);
+        const attrRaw = attr.toJS({LF: (bodyJS ? nextLF : currentLF)});
 
         // transpile attributes to array function if they include variables
-        const hasVars = /\(.+?\)|\$\{.+?}/s.test(attr);
-        const attrJS = hasVars ? `${vName} => (${attr})` : attr;
+        const hasVars = /\(.+?\)|\$\{.+?}/s.test(attrRaw);
+        const attrJS = hasVars ? `${vName} => (${attrRaw})` : attrRaw;
 
         const nameJS = JSON.stringify(tagName);
-        const hasAttr = /:/.test(attr);
+        const hasAttr = /:/.test(attrRaw);
         const restJS = bodyJS ? (`, ${attrJS}, ${bodyJS}`) : (hasAttr ? `, ${attrJS}` : "");
 
         return `${nspName}.tag(${nameJS}${restJS})`;
