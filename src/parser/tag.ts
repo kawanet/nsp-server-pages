@@ -38,7 +38,7 @@ export class Tag implements NSP.Transpiler {
         return /^<\//.test(this.src);
     }
 
-    private childrenToJS(option: NSP.ToJSOption): string {
+    private getBodyJS(option: NSP.ToJSOption): string {
         const {app} = this;
         const {indent, trimSpaces, vName} = app.options;
 
@@ -107,34 +107,43 @@ export class Tag implements NSP.Transpiler {
 
         if (this.isClose()) return; // invalid
 
-        const body = this.childrenToJS(option);
+        const bodyJS = this.getBodyJS(option);
 
         if (tagName) {
-            return this._toJS(option, body); // tag element
+            const commentJS = this.getCommentJS(option);
+            const tagJS = this.getTagJS(option, bodyJS); // tag element
+            return commentJS ? commentJS + tagJS : tagJS;
         } else {
-            return `${nspName}.bundle(${body})`; // root element
+            return `${nspName}.bundle(${bodyJS})`; // root element
         }
     }
 
-    private _toJS(option: NSP.ToJSOption, body: string): string {
+    private getCommentJS(option: NSP.ToJSOption): string {
+        const {app, src} = this;
+        if (!app.options.comment) return;
+
+        const currentLF = option?.LF ?? "\n";
+        return `// ${src?.replace(/\s*[\r\n]\s*/g, " ") ?? ""}${currentLF}`;
+    }
+
+    private getTagJS(option: NSP.ToJSOption, bodyJS: string): string {
         const {app, src, tagName} = this;
-        const {comment, indent, nspName, vName} = app.options;
+        const {indent, nspName, vName} = app.options;
 
         const spaces = +indent ? " ".repeat(+indent) : (indent ?? "");
         const currentLF = option?.LF ?? "\n";
         const nextLF = currentLF + spaces;
 
         // attributes as the second argument
-        let attr = new Attr(app, src).toJS({LF: (body ? nextLF : currentLF)});
+        let attr = new Attr(app, src).toJS({LF: (bodyJS ? nextLF : currentLF)});
         if (/\(.+?\)|\$\{.+?}/s.test(attr)) {
             attr = `${vName} => (${attr})`; // array function
         }
 
-        const commentV = comment ? `// ${src?.replace(/\s*[\r\n]\s*/g, " ") ?? ""}${currentLF}` : "";
-        const nameV = JSON.stringify(tagName);
+        const nameJS = JSON.stringify(tagName);
         const hasAttr = /:/.test(attr);
-        const restV = body ? (`, ${attr}, ${body}`) : (hasAttr ? `, ${attr}` : "");
+        const restJS = bodyJS ? (`, ${attr}, ${bodyJS}`) : (hasAttr ? `, ${attr}` : "");
 
-        return `${commentV}${nspName}.tag(${nameV}${restV})`;
+        return `${nspName}.tag(${nameJS}${restJS})`;
     }
 }
