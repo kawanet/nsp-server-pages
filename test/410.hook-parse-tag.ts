@@ -26,16 +26,20 @@ interface OutTagAttr {
 }
 
 describe(TITLE, () => {
-    const nsp = createNSP({nullish: true});
+    const nsp = createNSP({indent: 4, nullish: true});
 
     nsp.hook<SetTagAttr>("parse.tag.c:set", tag => {
-        const {vName} = tag.app.options;
+        const {indent, vName} = tag.app.options;
+        const spaces = +indent ? " ".repeat(+indent) : (indent ?? "");
+        const currentLF = tag.LF;
+        const nextLF = currentLF + spaces;
+
         const varJS = tag.attr.get("var");
         const isSimple = /^"[A-Za-z]\w*"$/.test(varJS);
         const accessor = isSimple ? "." + JSON.parse(varJS) : `[${varJS}]`;
         const value = tag.attr.get("value");
 
-        return `${vName} => { ${vName}${accessor} = ${value} }`;
+        return `${vName} => {${nextLF}${vName}${accessor} = ${value};${currentLF}}`;
     });
 
     nsp.hook<OutTagAttr>("parse.tag.c:out", tag => {
@@ -52,7 +56,7 @@ describe(TITLE, () => {
 
     it("<c:out/>", async () => {
         const parsed = nsp.parse('[<c:out value="${bar}"/>]');
-        // console.warn(parsed.toJS());
+        console.warn(parsed.toJS());
         const render = parsed.toFn<Context>();
 
         assert.equal(render({bar: "Bar"}), "[Bar]");
@@ -60,7 +64,7 @@ describe(TITLE, () => {
 
     it("<c:set/><c:out/>", async () => {
         const parsed = nsp.parse('[<c:set var="bar" value="${foo}"/>][<c:out value="${bar}" default="${buz}"/>]');
-        // console.warn(parsed.toJS());
+        console.warn(parsed.toJS());
         const render = parsed.toFn<Context>();
 
         assert.equal(render({}), "[][]");
