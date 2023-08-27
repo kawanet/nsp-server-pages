@@ -1,3 +1,5 @@
+import type {NSP} from "./index";
+
 type RuntimeErrorHookType = "error";
 
 type RuntimeScriptletHookTypes =
@@ -36,12 +38,15 @@ type AfterParseHookTypes =
     | "after.parse.jsp"
     | "after.parse.text";
 
+type ParseTagHookTypes = `parse.tag.${string}`;
+
 type KnownHookTypes =
     RuntimeErrorHookType
     | RuntimeScriptletHookTypes
     | BeforeParseHookTypes
     | ParseHookTypes
-    | AfterParseHookTypes;
+    | AfterParseHookTypes
+    | ParseTagHookTypes;
 
 export interface Hooks {
     /**
@@ -80,6 +85,16 @@ export interface Hooks {
      * return undefined not to modify the output.
      */
     hook(type: AfterParseHookTypes, fn: (src: string) => string | void): void;
+
+    /**
+     * hooks called with TagParserDef to transpile tag implementation inline.
+     *
+     * @example
+     * nsp.hook("parse.tag.c:set", tag => {
+     *     return `v => { v[${tag.attr.get("var")}] = ${tag.attr.get("value")} }`;
+     * });
+     */
+    hook<A>(type: ParseTagHookTypes, fn: (tag: NSP.TagParserDef<A>) => string | void): void;
 
     /**
      * ==== OTHER HOOKS ====

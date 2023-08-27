@@ -117,14 +117,17 @@ export class Tag implements NSP.Transpiler {
 
         const attr = new Attr(app, this.src);
 
-        const bodyJS = this.getBodyJS(option);
+        const body = this.getBodyJS(option);
 
         const spaces = +indent ? " ".repeat(+indent) : (indent ?? "");
         const currentLF = option?.LF ?? "\n";
         const nextLF = currentLF + spaces;
-        const tagOption = {LF: (bodyJS ? nextLF : currentLF)};
+        const tagOption = {LF: (body ? nextLF : currentLF)};
 
-        const tagJS = this.getTagJS(attr, bodyJS, tagOption);
+        const type = `parse.tag.${tagName}`;
+        const def: NSP.TagParserDef<any> = {app, name: tagName, attr, body};
+
+        const tagJS = app.process<string>(type, def) ?? this.getTagJS(def, tagOption);
 
         return commentJS ? commentJS + tagJS : tagJS;
     }
@@ -137,11 +140,11 @@ export class Tag implements NSP.Transpiler {
         return `// ${src?.replace(/\s*[\r\n]\s*/g, " ") ?? ""}${currentLF}`;
     }
 
-    private getTagJS(attr: Attr, bodyJS: string, option: NSP.ToJSOption): string {
+    private getTagJS(def: NSP.TagParserDef<any>, option: NSP.ToJSOption): string {
         const {app, tagName} = this;
         const {nspName, vName} = app.options;
 
-        const attrRaw = attr.toJS(option);
+        const attrRaw = def.attr.toJS(option);
 
         // transpile attributes to array function if they include variables
         const hasVars = /\(.+?\)|\$\{.+?}/s.test(attrRaw);
@@ -149,7 +152,7 @@ export class Tag implements NSP.Transpiler {
 
         const nameJS = JSON.stringify(tagName);
         const hasAttr = /:/.test(attrRaw);
-        const restJS = bodyJS ? (`, ${attrJS}, ${bodyJS}`) : (hasAttr ? `, ${attrJS}` : "");
+        const restJS = def.body ? (`, ${attrJS}, ${def.body}`) : (hasAttr ? `, ${attrJS}` : "");
 
         return `${nspName}.tag(${nameJS}${restJS})`;
     }

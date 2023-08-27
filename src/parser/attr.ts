@@ -7,7 +7,7 @@ const isSafeKey = (key: string) => /^[A-Za-z_]\w+$/.test(key);
 /**
  * Parser for HTML tag attributes <tagName attr="value"/>
  */
-export class Attr implements NSP.Transpiler {
+export class Attr implements NSP.AttrParser<any> {
     protected src: string;
     private index: { [key: string]: string };
 

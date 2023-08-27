@@ -216,4 +216,17 @@ export declare namespace NSP {
          */
         toFn<T>(): NodeFn<T>;
     }
+
+    interface TagParserDef<A> {
+        app: App;
+        name: string;
+        attr: AttrParser<A>;
+        body: string;
+    }
+
+    interface AttrParser<A> extends Transpiler {
+        keys(): (keyof A)[];
+
+        get(key: keyof A): string; // JavaScript
+    }
 }
