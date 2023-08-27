@@ -44,8 +44,8 @@ export class Tag implements NSP.Transpiler {
      * Transpile JSP document to JavaScript source code
      */
     toJS(option?: NSP.ToJSOption): string {
-        const {app, src} = this;
-        const {comment, nspName, trimSpaces, vName} = app.options;
+        const {app, tagName} = this;
+        const {nspName, trimSpaces, vName} = app.options;
 
         const indent = +app.options.indent || 0;
         const currentIndent = +option?.currentIndent || 0;
@@ -84,7 +84,6 @@ export class Tag implements NSP.Transpiler {
             args.push('""');
         }
 
-        const {tagName} = this;
         const isRoot = !tagName;
 
         const last = args.length - 1;
@@ -98,26 +97,37 @@ export class Tag implements NSP.Transpiler {
             }
         });
 
-        let body = args.join(nextLF);
-        const bodyL = /^`\n/s.test(body) ? (isRoot ? "" : " ") : nextLF;
-        const bodyR = /(\n`|[)\s])$/s.test(body) ? "" : currentLF;
+        const bodyL = /^`\n/s.test(args.at(0)) ? "" : nextLF;
+        const bodyR = /(\n`|[)\s])$/s.test(args.at(-1)) ? "" : currentLF;
+        const body = hasBody ? (bodyL + args.join(nextLF) + bodyR) : "";
 
         if (isRoot) {
-            return `${nspName}.bundle(${bodyL}${body}${bodyR})`; // root element
+            return `${nspName}.bundle(${body})`; // root element
         }
 
+        // TODO
+        return this._toJS(option, body);
+    }
+
+    private _toJS(option: NSP.ToJSOption, body: string): string {
+        const {app, src, tagName} = this;
+        const {comment, nspName, vName} = app.options;
+
+        const indent = +app.options.indent || 0;
+        const currentIndent = +option?.currentIndent || 0;
+        const nextIndent = currentIndent + indent;
+
         // attributes as the second argument
-        let attr = new Attr(app, src).toJS({currentIndent: args.length ? nextIndent : currentIndent});
+        let attr = new Attr(app, src).toJS({currentIndent: (body ? nextIndent : currentIndent)});
         if (/\(.+?\)|\$\{.+?}/s.test(attr)) {
             attr = `${vName} => (${attr})`; // array function
         }
 
-        const commentV = comment ? `// ${src?.replace(/\s*[\r\n]\s*/g, " ") ?? ""}${currentLF}` : "";
+        const commentV = comment ? `// ${src?.replace(/\s*[\r\n]\s*/g, " ") ?? ""}${LF(currentIndent)}` : "";
         const nameV = JSON.stringify(tagName);
         const hasAttr = /:/.test(attr);
-        const attrV = (hasBody || hasAttr) ? `, ${attr}` : "";
-        const bodyV = hasBody ? `,${bodyL}${body}${bodyR}` : "";
+        const restV = (body ? (`, ${attr}, ${body}`) : (hasAttr ? `, ${attr}` : "");
 
-        return `${commentV}${nspName}.tag(${nameV}${attrV}${bodyV})`;
+        return `${commentV}${nspName}.tag(${nameV}${restV})`;
     }
 }
