@@ -1,7 +1,7 @@
-import type {NSP} from "../index.js"
+import type {NSP} from "../../index.js";
 
-import {parseEL} from "./parse-el.js";
-import {parseScriptlet} from "./parse-scriptlet.js";
+import {EL} from "./el.js";
+import {Scriptlet} from "./scriptlet.js";
 
 /**
  * escape special characters in Template Literal
@@ -23,36 +23,20 @@ const bodyRegExp = new RegExp(bodyRE, "s");
 /**
  * Parser for: text content
  */
-export const parseText = (app: NSP.App, src: string) => new TextParser(app, src);
+export class Text implements NSP.Transpiler {
+    protected src: string;
 
-class TextParser {
-    constructor(protected app: NSP.App, protected src: string) {
-        //
+    constructor(protected app: NSP.App, src: string) {
+        this.src = app.process<string>("before.parse.text", src) ?? src;
     }
 
     /**
      * Transpile ${expression} and <% scriptlet %> to JavaScript source code
      */
-    toJS(option?: NSP.ToJSOption) {
-        return textToJS(this.app, this.src, option);
-    }
-
-    /**
-     * Compile ${expression} and <% scriptlet %> to JavaScript function instance
-     */
-    toFn<T>() {
-        const {app} = this;
-        const {nspName, vName} = app.options;
-
-        const js = this.toJS();
-
-        try {
-            const fn = Function(nspName, vName, `return ${js}`) as (app: NSP.App, v: T) => string | Promise<string>;
-            return (context: T) => fn(app, context);
-        } catch (e) {
-            app.log("TextParser: " + js?.substring(0, 1000));
-            throw e;
-        }
+    toJS(option: NSP.ToJSOption) {
+        const {app, src} = this;
+        const js = app.process<string>("parse.text", src) ?? textToJS(app, src, option);
+        return app.process<string>("after.parse.text", js) ?? js;
     }
 }
 
@@ -77,7 +61,7 @@ const textToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): string => 
             value = value.replace(/^[$#]\{\s*/s, "");
             value = value.replace(/\s*}$/s, "");
 
-            const item = parseEL(app, value);
+            const item = new EL(app, value);
             if (isAsync) {
                 items.push({toJS: (option) => `await ${item.toJS(option)}`});
             } else {
@@ -87,7 +71,7 @@ const textToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): string => 
         } else if (i3 === 2) {
 
             // <% scriptlet %>
-            const item = parseScriptlet(app, value);
+            const item = new Scriptlet(app, value);
             items.push(item);
 
         } else {

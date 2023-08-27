@@ -1,3 +1,4 @@
+*.js
 *.swp
 *.tgz
 *~
@@ -6,11 +7,7 @@
 ._*
 /.idea/*.iml
 /.idea/*.xml
-/cjs/src/*.js
-/cjs/test/*.js
 /node_modules
 /package-lock.json
-/src/*.js
-/test/*.js
 /tmp/
 ~$*

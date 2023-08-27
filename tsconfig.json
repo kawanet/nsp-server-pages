@@ -1,23 +1,24 @@
 {
   "exclude": [
-    "cjs/",
     "node_modules",
     "tmp/"
   ],
   "include": [
+    "index.ts",
     "src/",
-    "test/"
+    "test/",
+    "types/"
   ],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "module": "ESNext",
-    "moduleResolution": "nodenext",
+    "moduleResolution": "node",
     "noImplicitAny": true,
     "noImplicitReturns": false,
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "outDir": "./",
+    "outDir": "./esm/",
     "removeComments": false,
     "resolvePackageJsonExports": false,
     "skipLibCheck": false,

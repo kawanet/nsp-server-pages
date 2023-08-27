@@ -1,25 +1,24 @@
-import type {NSP} from "../index.js"
+import type {NSP} from "../index.js";
 
 import {load, mount} from "./mount.js";
 import {FileLoader, JsLoader, JspLoader} from "./loaders.js";
-import {parseJSP} from "./parse-jsp.js";
+import {JSP} from "./parser/jsp.js";
 import {catchFn} from "./catch.js";
 import {bundle} from "./bundle.js";
 import {addTagLib, prepareTag} from "./taglib.js";
 import {concat} from "./concat.js";
+import {StackStore} from "./stack-store.js";
 
-export const createNSP = (options?: NSP.Options): NSP.App => new App(options);
-
-class App implements NSP.App {
-    loaders: NSP.LoaderFn[] = [];
-    tagMap = new Map<string, NSP.TagFn<any>>();
-    fnMap = new Map<string, (...args: any[]) => any>();
-    options: NSP.Options;
-
-    protected hooks = new Map<string, (...args: any[]) => any>;
+export class App implements NSP.App {
+    protected loaders: NSP.LoaderFn[] = [];
+    protected tagMap = new Map<string, NSP.TagFn<any>>();
+    protected fnMap = new Map<string, (...args: any[]) => any>();
+    protected hooks = new Map<string, (...args: any[]) => any>();
     protected jsLoader: JsLoader;
     protected jspLoader: JspLoader;
     protected fileLoader: FileLoader;
+
+    options: NSP.Options;
 
     constructor(options?: NSP.Options) {
         this.options = options = Object.create(options || null);
@@ -34,7 +33,7 @@ class App implements NSP.App {
 
     process(type: string, ...args: any[]): any {
         const fn = this.hooks.get(type);
-        if (fn) return fn.apply(null, args);
+        if (fn) return fn.apply(this, args);
     }
 
     log(message: string): void {
@@ -53,12 +52,12 @@ class App implements NSP.App {
     }
 
     addTagLib(tagLibDef: NSP.TagLibDef): void {
-        addTagLib(this, tagLibDef);
+        addTagLib.call(this, tagLibDef);
     }
 
     tag<A, T = any>(name: string, attr?: A | NSP.AttrFn<A, T>, ..._: NSP.Node<T>[]): NSP.NodeFn<T> {
         const bodyFn = bundle(arguments, 2);
-        const tagFn = prepareTag(this, name, attr, bodyFn);
+        const tagFn = prepareTag.call(this, name, attr, bodyFn);
         return catchFn(this, tagFn);
     }
 
@@ -67,44 +66,44 @@ class App implements NSP.App {
         return catchFn(this, fn);
     }
 
-    parse(src: string): NSP.Parser {
-        return parseJSP(this, src);
+    parse(src: string): NSP.JspParser {
+        return new JSP(this, src);
     }
 
     mount(path: RegExp | string, fn: NSP.LoaderFn): void {
-        return mount(this, path, fn);
+        return mount.call(this, path, fn);
     }
 
     load<T = any>(path: string): Promise<NSP.NodeFn<T>> {
-        return load<T>(this, path);
+        return load.call(this, path);
     }
 
     loadJS<T = any>(file: string): Promise<NSP.NodeFn<T>> {
-        const loader = this.jsLoader || (this.jsLoader = new JsLoader(this));
+        const loader = (this.jsLoader ??= new JsLoader(this));
         return loader.load<T>(file);
     }
 
     loadJSP<T = any>(file: string): Promise<NSP.NodeFn<T>> {
-        const loader = this.jspLoader || (this.jspLoader = new JspLoader(this));
+        const loader = (this.jspLoader ??= new JspLoader(this));
         return loader.load<T>(file);
     }
 
     loadFile<T = any>(file: string): Promise<NSP.NodeFn<T>> {
-        const loader = this.fileLoader || (this.fileLoader = new FileLoader(this));
+        const loader = (this.fileLoader ??= new FileLoader(this));
         return loader.load<T>(file);
     }
 
-    store<S>(context: any, key: string, initFn?: () => S): S {
+    store<P>(context: any, key: string): StackStore<P> {
         if ("object" !== typeof context && context == null) {
             throw new Error("Context must be an object");
         }
 
         const {storeKey} = this.options;
-        const map = context[storeKey] || (context[storeKey] = new Map());
+        const map = (context[storeKey] ??= new Map()) as Map<string, StackStore<any>>;
 
-        let value = map.get(key);
+        let value: StackStore<P> = map.get(key);
         if (value == null) {
-            value = initFn();
+            value = new StackStore<P>();
             map.set(key, value);
         }
         return value;

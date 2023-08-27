@@ -4,9 +4,11 @@
  * @see https://github.com/kawanet/nsp-server-pages
  */
 
+import type {Hooks} from "./hooks.js";
+
 export const createNSP: (options?: NSP.Options) => NSP.App;
 
-declare namespace NSP {
+export declare namespace NSP {
     type NodeFn<T> = (context: T) => string | Promise<string>;
 
     type Node<T> = string | NodeFn<T>;
@@ -52,10 +54,10 @@ declare namespace NSP {
         storeKey?: string;
 
         /**
-         * indent size for JavaScript source generated
-         * @default 0
+         * indent spaces for JavaScript source generated
+         * @default 0 (no indent)
          */
-        indent?: number;
+        indent?: number | string;
 
         /**
          * add comments at toJS() result
@@ -74,23 +76,10 @@ declare namespace NSP {
          * @default false
          */
         nullish?: boolean;
-
-        /**
-         * expression filter before transpile starts
-         */
-        prefilter?: (src: string) => string;
-
-        /**
-         * expression filter after transpile done
-         */
-        postfilter?: (src: string) => string;
     }
 
-    interface App {
-        fnMap: Map<string, (...args: any[]) => any>;
-        loaders: LoaderFn[];
+    interface App extends Hooks {
         options: Options;
-        tagMap: Map<string, TagFn<any>>;
 
         /**
          * register a tag library
@@ -142,27 +131,20 @@ declare namespace NSP {
         mount(path: RegExp | string, fn: LoaderFn): void;
 
         /**
-         * register a hook function
+         * register a hook function. see hooks.d.ts for detail
          */
-        hook(type: "error", fn: (e: Error, context?: any) => string | void): void;
 
-        hook(type: "directive", fn: (src: string, context?: any) => string | void): void;
-
-        hook(type: "declaration", fn: (src: string, context?: any) => string | void): void;
-
-        hook(type: "scriptlet", fn: (src: string, context?: any) => string | void): void;
-
-        hook(type: string, fn: (...args: any[]) => any): void;
+        // hook(type: string, fn: (...args: any[]) => any): void;
 
         /**
          * parse a JSP document
          */
-        parse(src: string): Parser;
+        parse(src: string): JspParser;
 
         /**
          * get a private data store in context
          */
-        store<S>(context: any, key: string, initFn?: () => S): S;
+        store<P>(context: any, key: string): StackStore<P>;
 
         /**
          * generates a NodeFn for the tag
@@ -187,22 +169,66 @@ declare namespace NSP {
         tag?: { [name: string]: TagFn<any> };
     }
 
+    interface StackStore<P> {
+        /**
+         * set value to the store
+         */
+        set(value: P): void;
+
+        /**
+         * get value from the store
+         */
+        get(): P;
+
+        /**
+         * open a new layer
+         */
+        open(value?: P): void;
+
+        /**
+         * close the current layer
+         */
+        close(): P;
+
+        /**
+         * find a value from layers with the test function
+         */
+        find(test: (data: P) => boolean): P;
+    }
+
     interface ToJSOption {
-        indent?: number;
+        LF?: string;
+    }
+
+    interface Transpiler {
+        /**
+         * transpile to JavaScript source code
+         */
+        toJS(option?: ToJSOption): string;
     }
 
     /**
      * Parser for JSP document
      */
-    interface Parser {
-        /**
-         * transpile the JSP document to JavaScript source code
-         */
-        toJS(option?: ToJSOption): string;
-
+    interface JspParser extends Transpiler {
         /**
          * compile the JSP document as a NodeFn
          */
         toFn<T>(): NodeFn<T>;
+    }
+
+    interface TagParserDef<A> {
+        app: App;
+        name: string;
+        attr: AttrParser<A>;
+        body: string;
+        LF: string;
+        nextLF: string;
+    }
+
+    interface AttrParser<A> extends Transpiler {
+        keys(): (keyof A)[];
+
+        get(key: keyof A): string; // JavaScript
     }
 }

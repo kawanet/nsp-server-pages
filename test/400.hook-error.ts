@@ -9,7 +9,7 @@ describe(TITLE, () => {
     /**
      * This pass the error to the next handler when it's a SyntaxError but not other errors.
      */
-    nsp.hook("error", (e: Error): string => {
+    nsp.hook("error", (e) => {
         if (e instanceof SyntaxError) throw e;
         return `[${e?.message}]`;
     });

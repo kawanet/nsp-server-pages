@@ -1,17 +1,18 @@
-import type {NSP} from "../index.js"
+import type {NSP} from "../index.js";
+import type {App} from "./app.js";
 
-export const mount = (app: NSP.App, match: RegExp | string, fn: NSP.LoaderFn): void => {
+export function mount(this: App, match: RegExp | string, fn: NSP.LoaderFn): void {
     const test: { test: (path: string) => boolean } = ("string" !== typeof match) ? match : {
         test: ((path: string) => path.startsWith(match))
     };
 
-    app.loaders.push(!test ? fn : path => {
+    this.loaders.push(!test ? fn : path => {
         if (test.test(path)) return fn(path);
     });
 }
 
-export const load = async <T = any>(app: NSP.App, path: string): Promise<NSP.NodeFn<T>> => {
-    const {loaders} = app;
+export async function load<T = any>(this: App, path: string): Promise<NSP.NodeFn<T>> {
+    const {loaders} = this;
 
     const search = path.replace(/^[^?]*\??/, "");
 
@@ -34,4 +35,4 @@ export const load = async <T = any>(app: NSP.App, path: string): Promise<NSP.Nod
 
         return fn(context);
     };
-};
+}

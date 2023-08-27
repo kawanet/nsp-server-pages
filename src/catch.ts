@@ -1,10 +1,6 @@
-import type {NSP} from "../index.js"
+import type {NSP} from "../index.js";
 
 const isPromise = <T>(v: any): v is Promise<T> => v && (typeof v.catch === "function");
-
-interface TagData {
-    error?: Error;
-}
 
 export const catchFn = <T>(app: NSP.App, fn: NSP.NodeFn<T>): NSP.NodeFn<T> => {
     return context => {
@@ -22,9 +18,13 @@ export const catchFn = <T>(app: NSP.App, fn: NSP.NodeFn<T>): NSP.NodeFn<T> => {
         function errorHandler(e: Error): string {
             // just throw the error if it's already handled
             if (context != null) {
-                const data = app.store<TagData>(context, "error", () => ({}));
-                if (data.error === e) throw e;
-                data.error = e;
+                const store = app.store<Error>(context, "error");
+
+                if (store.find(err => (err === e))) {
+                    throw e;
+                }
+
+                store.open(e);
             }
 
             // call the error hook

@@ -1,4 +1,4 @@
-import type {NSP} from "../index.js"
+import type {NSP} from "../../index.js";
 
 const trim = (str: string) => str.replace(/^\s+/s, "").replace(/\s+$/s, "");
 
@@ -36,40 +36,27 @@ const itemRegExp = new RegExp(`(${itemRE})`, "s");
 /**
  * Simplified transformer for expression language
  */
-export const parseEL = (app: NSP.App, src: string) => new ElParser(app, src);
+export class EL implements NSP.Transpiler {
+    protected src: string;
 
-class ElParser {
-    constructor(protected app: NSP.App, protected src: string) {
-        //
-    }
-
-    /**
-     * Compile ${EL} to JavaScript function instance
-     */
-    toFn<T>() {
-        const {app} = this;
-        const {nspName, vName} = app.options;
-
-        const js = this.toJS();
-
-        try {
-            const fn = Function(nspName, vName, `return ${js}`) as (app: NSP.App, v: T) => string;
-            return (context: T) => fn(app, context);
-        } catch (e) {
-            app.log("ElParser: " + js?.substring(0, 1000));
-            throw e;
-        }
+    constructor(protected app: NSP.App, src: string) {
+        src = trim(src);
+        this.src = app.process<string>("before.parse.el", src) ?? src;
     }
 
     /**
      * Transpile ${EL} to JavaScript source code
      */
-    toJS(_?: NSP.ToJSOption) {
-        const {app} = this;
-        const {nullish, prefilter, postfilter} = app.options;
+    toJS(option: NSP.ToJSOption) {
+        const {app, src} = this;
+        const js = app.process<string>("parse.el", src) ?? this._toJS(option);
+        return app.process<string>("after.parse.el", js) ?? js;
+    }
 
-        let src = trim(this.src);
-        if (prefilter) src = prefilter(src);
+    private _toJS(_: NSP.ToJSOption) {
+        const {app, src} = this;
+        const {nullish} = app.options;
+
         if (src == null) return 'null';
 
         const array = src.split(itemRegExp);
@@ -107,8 +94,6 @@ class ElParser {
             }
             js = `${js} ?? ""`;
         }
-
-        if (postfilter) js = postfilter(js);
 
         return js;
     }
