@@ -1,7 +1,5 @@
 import type {NSP} from "../../index.js";
 
-const LF = (indent: number) => (+indent ? "\n" + " ".repeat(indent) : "\n");
-
 const typeMap: { [key: string]: string } = {
     "<%-": "comment",
     "<%@": "directive",
@@ -38,9 +36,7 @@ export class Scriptlet implements NSP.Transpiler {
     private _toJS(option: NSP.ToJSOption): string {
         const {app, type} = this;
         const {nspName, vName} = app.options;
-
-        const currentIndent = +option?.currentIndent || 0;
-        const currentLF = LF(currentIndent);
+        const currentLF = option?.LF ?? "\n";
 
         let {src} = this;
 

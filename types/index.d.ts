@@ -197,7 +197,7 @@ export declare namespace NSP {
     }
 
     interface ToJSOption {
-        currentIndent?: number;
+        LF?: string;
     }
 
     interface Transpiler {

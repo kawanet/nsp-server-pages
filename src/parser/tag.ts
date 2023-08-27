@@ -14,8 +14,6 @@ const emptyText: { [str: string]: boolean } = {
 
 const isTranspiler = (v: any): v is NSP.Transpiler => ("function" === typeof v?.toJS);
 
-const LF = (indent: number) => (+indent ? "\n" + " ".repeat(indent) : "\n");
-
 /**
  * Root node or an taglib node
  */
@@ -45,16 +43,14 @@ export class Tag implements NSP.Transpiler {
         const {trimSpaces, vName} = app.options;
 
         const indent = +app.options.indent || 0;
-        const currentIndent = +option?.currentIndent || 0;
-        const nextIndent = currentIndent + indent;
-        const currentLF = LF(currentIndent);
-        const nextLF = LF(nextIndent);
+        const currentLF = option?.LF ?? "\n";
+        const nextLF = indent ? currentLF + " ".repeat(indent) : currentLF;
 
         const {children} = this;
 
         const args = children.map(item => {
             if (isTranspiler(item)) {
-                return item.toJS({currentIndent: nextIndent});
+                return item.toJS({LF: nextLF});
             } else if (!/\S/.test(item)) {
                 // item with only whitespace
                 return (trimSpaces !== false) ? '""' : JSON.stringify(item);
@@ -66,7 +62,7 @@ export class Tag implements NSP.Transpiler {
                     item = item.replace(/[ \t]+$/s, " ");
                 }
 
-                let js = new Text(app, item).toJS({currentIndent: nextIndent});
+                let js = new Text(app, item).toJS({LF: nextLF});
                 if (/\(.+?\)|\$\{.+?}/s.test(js)) {
                     js = `${vName} => ${js}`; // array function
                 }
@@ -125,16 +121,16 @@ export class Tag implements NSP.Transpiler {
         const {comment, nspName, vName} = app.options;
 
         const indent = +app.options.indent || 0;
-        const currentIndent = +option?.currentIndent || 0;
-        const nextIndent = currentIndent + indent;
+        const currentLF = option?.LF ?? "\n";
+        const nextLF = indent ? currentLF + " ".repeat(indent) : currentLF;
 
         // attributes as the second argument
-        let attr = new Attr(app, src).toJS({currentIndent: (body ? nextIndent : currentIndent)});
+        let attr = new Attr(app, src).toJS({LF: (body ? nextLF : currentLF)});
         if (/\(.+?\)|\$\{.+?}/s.test(attr)) {
             attr = `${vName} => (${attr})`; // array function
         }
 
-        const commentV = comment ? `// ${src?.replace(/\s*[\r\n]\s*/g, " ") ?? ""}${LF(currentIndent)}` : "";
+        const commentV = comment ? `// ${src?.replace(/\s*[\r\n]\s*/g, " ") ?? ""}${currentLF}` : "";
         const nameV = JSON.stringify(tagName);
         const hasAttr = /:/.test(attr);
         const restV = body ? (`, ${attr}, ${body}`) : (hasAttr ? `, ${attr}` : "");

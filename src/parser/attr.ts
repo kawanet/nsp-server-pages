@@ -2,8 +2,6 @@ import type {NSP} from "../../index.js";
 
 import {Text} from "./text.js";
 
-const LF = (indent: number) => (+indent ? "\n" + " ".repeat(indent) : "\n");
-
 /**
  * Parser for HTML tag attributes <tagName attr="value"/>
  */
@@ -32,10 +30,8 @@ const attrToJS = (app: NSP.App, tag: string, option: NSP.ToJSOption): string => 
     tag = tag?.replace(/\s*\/?>\s*$/s, "");
 
     const indent = +app.options.indent || 0;
-    const currentIndent = +option?.currentIndent || 0;
-    const nextIndent = currentIndent + indent;
-    const currentLF = LF(currentIndent);
-    const nextLF = LF(nextIndent);
+    const currentLF = option?.LF ?? "\n";
+    const nextLF = indent ? currentLF + " ".repeat(indent) : currentLF;
 
     const keys: string[] = [];
     const index: { [key: string]: string | boolean } = {};
@@ -54,7 +50,7 @@ const attrToJS = (app: NSP.App, tag: string, option: NSP.ToJSOption): string => 
         }
 
         if ("string" === typeof value) {
-            value = new Text(app, value).toJS({currentIndent: nextIndent});
+            value = new Text(app, value).toJS({LF: nextLF});
         }
 
         return `${key}: ${value}`;
