@@ -1,7 +1,7 @@
 import type {NSP} from "../../index.js";
+import {Attr} from "./attr.js";
 
 import {Text} from "./text.js";
-import {Attr} from "./attr.js";
 
 const emptyText: { [str: string]: boolean } = {
     '""': true,
@@ -42,7 +42,7 @@ export class Tag implements NSP.Transpiler {
         const {app} = this;
         const {indent, trimSpaces, vName} = app.options;
 
-        const spaces = +indent ? " ".repeat(+indent) : (indent ?? "");
+        const spaces = ("string" === typeof indent) ? indent : (+indent ? " ".repeat(+indent) : "");
         const currentLF = option?.LF ?? "\n";
         const nextLF = currentLF + spaces;
 
@@ -119,7 +119,7 @@ export class Tag implements NSP.Transpiler {
 
         const body = this.getBodyJS(option);
 
-        const spaces = +indent ? " ".repeat(+indent) : (indent ?? "");
+        const spaces = ("string" === typeof indent) ? indent : (+indent ? " ".repeat(+indent) : "");
         const currentLF = option?.LF ?? "\n";
         const nextLF = currentLF + spaces;
         const tagOption = {LF: (body ? nextLF : currentLF)};

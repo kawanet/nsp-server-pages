@@ -63,7 +63,7 @@ export class Attr implements NSP.AttrParser<any> {
     private _toJS(option: NSP.ToJSOption): string {
         const {app} = this;
         const {indent} = app.options;
-        const spaces = +indent ? " ".repeat(+indent) : (indent ?? "");
+        const spaces = ("string" === typeof indent) ? indent : (+indent ? " ".repeat(+indent) : "");
         const currentLF = option?.LF ?? "\n";
         const nextLF = currentLF + spaces;
 

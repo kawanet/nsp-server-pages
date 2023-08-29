@@ -54,7 +54,7 @@ describe(TITLE, () => {
 
     it("<c:out/>", async () => {
         const parsed = nsp.parse('[<c:out value="${bar}"/>]');
-        console.warn(parsed.toJS());
+        // console.warn(parsed.toJS());
         const render = parsed.toFn<Context>();
 
         assert.equal(render({bar: "Bar"}), "[Bar]");
@@ -62,7 +62,7 @@ describe(TITLE, () => {
 
     it("<c:set/><c:out/>", async () => {
         const parsed = nsp.parse('[<c:set var="bar" value="${foo}"/>][<c:out value="${bar}" default="${buz}"/>]');
-        console.warn(parsed.toJS());
+        // console.warn(parsed.toJS());
         const render = parsed.toFn<Context>();
 
         assert.equal(render({}), "[][]");
