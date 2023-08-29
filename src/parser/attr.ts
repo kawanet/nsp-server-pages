@@ -63,9 +63,10 @@ export class Attr implements NSP.AttrParser<any> {
     private _toJS(option: NSP.ToJSOption): string {
         const {app} = this;
         const {indent} = app.options;
-        const spaces = ("string" === typeof indent) ? indent : (+indent ? " ".repeat(+indent) : "");
-        const currentLF = option?.LF ?? "\n";
-        const nextLF = currentLF + spaces;
+
+        const SP = option?.SP ?? (("string" === typeof indent) ? indent : (+indent ? " ".repeat(+indent) : ""));
+        const LF = option?.LF ?? "\n";
+        const nextLF = LF + SP;
 
         const keys = this.keys();
         const items: string[] = keys.map(key => {
@@ -82,7 +83,7 @@ export class Attr implements NSP.AttrParser<any> {
 
         const js = items.join(`,${nextLF}`);
         const trailingComma = (keys.length > 1) ? "," : "";
-        return `{${nextLF}${js}${trailingComma}${currentLF}}`;
+        return `{${nextLF}${js}${trailingComma}${LF}}`;
     }
 }
 
