@@ -28,6 +28,9 @@ describe(TITLE, () => {
     it(optD, async () => {
         result0 = nspD.parse(doc).toJS();
         assert.equal(nspD.parse(doc).toFn()(ctx), expected);
+
+        // trailing spaces
+        assert.doesNotMatch(result0, / +\n/);
     });
 
     it(opt0, async () => {
@@ -38,6 +41,9 @@ describe(TITLE, () => {
     it(opt4, async () => {
         result4 = nsp4.parse(doc).toJS();
         assert.equal(nsp4.parse(doc).toFn()(ctx), expected);
+
+        // trailing spaces
+        assert.doesNotMatch(result4, / +\n/);
     });
 
     it(optE, async () => {

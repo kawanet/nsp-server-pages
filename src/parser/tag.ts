@@ -149,11 +149,15 @@ export class Tag implements NSP.Transpiler {
 
         // transpile attributes to array function if they include variables
         const hasVars = /\(.+?\)|\$\{.+?}/s.test(attrRaw);
-        const attrJS = hasVars ? `${vName} => (${attrRaw})` : attrRaw;
+        const attrArg = hasVars ? `, ${vName} => (${attrRaw})` : `, ${attrRaw}`;
 
         const nameJS = JSON.stringify(tagName);
         const hasAttr = /:/.test(attrRaw);
-        const restJS = def.body ? (`, ${attrJS}, ${def.body}`) : (hasAttr ? `, ${attrJS}` : "");
+
+        let bodyArg = def.body;
+        if (bodyArg) bodyArg = ((/^\n/.test(bodyArg)) ? "," : ", ") + bodyArg;
+
+        const restJS = bodyArg ? (attrArg + bodyArg) : (hasAttr ? attrArg : "");
 
         return `${nspName}.tag(${nameJS}${restJS})`;
     }
