@@ -11,7 +11,7 @@ NSP JavaScript Server Pages for Node.js
 - `${ f:h("tag") }` - custom taglib static function call
 - `<ns:tag attr="${ expression }"/>` - custom taglib action tag
 - `<%-- comments --%>` - comments in JSP just ignored
-- See TypeScript declaration [index.d.ts](https://github.com/kawanet/nsp-server-pages/blob/main/index.d.ts) for API detail.
+- See [TypeScript declaration files](https://github.com/kawanet/nsp-server-pages/tree/main/types/) for API detail.
 
 ## SYNOPSIS
 
@@ -156,6 +156,7 @@ app.use("/", async (req, res, next) => {
 - https://github.com/kawanet/nsp-server-pages
 - https://github.com/kawanet/nsp-jstl-taglib
 - https://github.com/kawanet/nsp-struts1-taglib
+- https://github.com/kawanet/nsp-seasar2-taglib
 - https://github.com/apache/tomcat
 
 ## LICENSE

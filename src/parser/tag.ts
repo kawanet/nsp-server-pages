@@ -1,7 +1,7 @@
 import type {NSP} from "../../index.js";
+import {Attr} from "./attr.js";
 
 import {Text} from "./text.js";
-import {Attr} from "./attr.js";
 
 const emptyText: { [str: string]: boolean } = {
     '""': true,
@@ -42,15 +42,16 @@ export class Tag implements NSP.Transpiler {
         const {app} = this;
         const {indent, trimSpaces, vName} = app.options;
 
-        const spaces = +indent ? " ".repeat(+indent) : (indent ?? "");
-        const currentLF = option?.LF ?? "\n";
-        const nextLF = currentLF + spaces;
+        const SP = option?.SP ?? (("string" === typeof indent) ? indent : (+indent ? " ".repeat(+indent) : ""));
+        const LF = option?.LF ?? "\n";
+        const nextLF = LF + SP;
+        const nextOption = {SP, LF: nextLF};
 
         const {children} = this;
 
         const args = children.map(item => {
             if (isTranspiler(item)) {
-                return item.toJS({LF: nextLF});
+                return item.toJS(nextOption);
             } else if (!/\S/.test(item)) {
                 // item with only whitespace
                 return (trimSpaces !== false) ? '""' : JSON.stringify(item);
@@ -62,7 +63,7 @@ export class Tag implements NSP.Transpiler {
                     item = item.replace(/[ \t]+$/s, " ");
                 }
 
-                let js = new Text(app, item).toJS({LF: nextLF});
+                let js = new Text(app, item).toJS(nextOption);
                 if (/\(.+?\)|\$\{.+?}/s.test(js)) {
                     js = `${vName} => ${js}`; // array function
                 }
@@ -87,13 +88,13 @@ export class Tag implements NSP.Transpiler {
             if (idx !== last && !isComment) {
                 args[idx] += ","
             } else if (idx === last && isComment) {
-                args[idx] += currentLF;
+                args[idx] += LF;
             }
         });
 
         const bodyL = /^`\n/s.test(args.at(0)) ? "" : nextLF;
 
-        const bodyR = /(\n`|[)\s])$/s.test(args.at(-1)) ? "" : currentLF;
+        const bodyR = /(\n`|[)\s])$/s.test(args.at(-1)) ? "" : LF;
 
         return bodyL + args.join(nextLF) + bodyR;
     }
@@ -119,15 +120,15 @@ export class Tag implements NSP.Transpiler {
 
         const body = this.getBodyJS(option);
 
-        const spaces = +indent ? " ".repeat(+indent) : (indent ?? "");
-        const currentLF = option?.LF ?? "\n";
-        const nextLF = currentLF + spaces;
-        const tagOption = {LF: (body ? nextLF : currentLF)};
+        const SP = option?.SP ?? (("string" === typeof indent) ? indent : (+indent ? " ".repeat(+indent) : ""));
+        const LF = option?.LF ?? "\n";
+        const nextLF = LF + SP;
+        const nextOption = {SP, LF: (body ? nextLF : LF)};
 
         const type = `parse.tag.${tagName}`;
-        const def: NSP.TagParserDef<any> = {app, name: tagName, attr, body, LF: currentLF, nextLF};
+        const def: NSP.TagParserDef<any> = {app, name: tagName, attr, body, LF: LF, nextLF};
 
-        const tagJS = app.process<string>(type, def) ?? this.getTagJS(def, tagOption);
+        const tagJS = app.process<string>(type, def) ?? this.getTagJS(def, nextOption);
 
         return commentJS ? commentJS + tagJS : tagJS;
     }
@@ -148,11 +149,15 @@ export class Tag implements NSP.Transpiler {
 
         // transpile attributes to array function if they include variables
         const hasVars = /\(.+?\)|\$\{.+?}/s.test(attrRaw);
-        const attrJS = hasVars ? `${vName} => (${attrRaw})` : attrRaw;
+        const attrArg = hasVars ? `, ${vName} => (${attrRaw})` : `, ${attrRaw}`;
 
         const nameJS = JSON.stringify(tagName);
         const hasAttr = /:/.test(attrRaw);
-        const restJS = def.body ? (`, ${attrJS}, ${def.body}`) : (hasAttr ? `, ${attrJS}` : "");
+
+        let bodyArg = def.body;
+        if (bodyArg) bodyArg = ((/^\n/.test(bodyArg)) ? "," : ", ") + bodyArg;
+
+        const restJS = bodyArg ? (attrArg + bodyArg) : (hasAttr ? attrArg : "");
 
         return `${nspName}.tag(${nameJS}${restJS})`;
     }

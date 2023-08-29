@@ -198,6 +198,7 @@ export declare namespace NSP {
 
     interface ToJSOption {
         LF?: string;
+        SP?: string;
     }
 
     interface Transpiler {
