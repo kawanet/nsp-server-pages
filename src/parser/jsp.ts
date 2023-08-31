@@ -1,6 +1,6 @@
 import type {NSP} from "../../index.js";
-import {Scriptlet} from "./scriptlet.js";
 import {Store} from "../store.js";
+import {Scriptlet} from "./scriptlet.js";
 import {Tag} from "./tag.js";
 
 /**

@@ -1,13 +1,12 @@
 import type {NSP} from "../index.js";
-
-import {load, mount} from "./mount.js";
-import {FileLoader, JsLoader, JspLoader} from "./loaders.js";
-import {JSP} from "./parser/jsp.js";
-import {catchFn} from "./catch.js";
 import {bundle} from "./bundle.js";
-import {addTagLib, prepareTag} from "./taglib.js";
+import {catchFn} from "./catch.js";
 import {concat} from "./concat.js";
+import {FileLoader, JsLoader, JspLoader} from "./loaders.js";
+import {load, mount} from "./mount.js";
+import {JSP} from "./parser/jsp.js";
 import {Store} from "./store.js";
+import {addTagLib, prepareTag} from "./taglib.js";
 
 export class App implements NSP.App {
     protected loaders: NSP.LoaderFn[] = [];
