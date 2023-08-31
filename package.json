@@ -1,7 +1,7 @@
 {
   "name": "nsp-server-pages",
   "description": "NSP JavaScript Server Pages for Node.js",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": "@kawanet",
   "bugs": {
     "url": "https://github.com/kawanet/nsp-server-pages/issues"
