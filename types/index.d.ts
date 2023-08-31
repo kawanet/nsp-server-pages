@@ -19,6 +19,8 @@ export declare namespace NSP {
 
     type TagFn<A, T = any> = (tag: TagDef<A, T>) => (NodeFn<T> | VoidFn<T>);
 
+    type TagCon<A, T = any> = { new(tag: NSP.TagDef<A>, context: T): TagClass };
+
     type LoaderFn = (path: string) => Promise<NodeFn<any> | undefined>;
 
     type Strings = string | Promise<string> | Strings[];
@@ -166,7 +168,11 @@ export declare namespace NSP {
         /**
          * tags
          */
-        tag?: { [name: string]: TagFn<any> };
+        tag?: { [name: string]: TagFn<any> | TagCon<any> };
+    }
+
+    interface TagClass {
+        render(): string | Promise<string>
     }
 
     interface StackStore<P> {
