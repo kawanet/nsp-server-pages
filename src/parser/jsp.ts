@@ -1,6 +1,6 @@
 import type {NSP} from "../../index.js";
+import {Store} from "../store.js";
 import {Scriptlet} from "./scriptlet.js";
-import {StackStore} from "../stack-store.js";
 import {Tag} from "./tag.js";
 
 /**
@@ -48,7 +48,7 @@ const tagRegExp = new RegExp(`(</?${nameRE}:(?:${insideRE})*?>)|(<%(?:${insideRE
 
 export const jspToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): string => {
     const root = new Tag(app);
-    const tree = new StackStore<Tag>(root);
+    const tree = new Store<Tag>(root);
     const array = src.split(tagRegExp);
 
     for (let i = 0; i < array.length; i++) {

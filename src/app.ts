@@ -1,13 +1,12 @@
 import type {NSP} from "../index.js";
-
-import {load, mount} from "./mount.js";
-import {FileLoader, JsLoader, JspLoader} from "./loaders.js";
-import {JSP} from "./parser/jsp.js";
-import {catchFn} from "./catch.js";
 import {bundle} from "./bundle.js";
-import {addTagLib, prepareTag} from "./taglib.js";
+import {catchFn} from "./catch.js";
 import {concat} from "./concat.js";
-import {StackStore} from "./stack-store.js";
+import {FileLoader, JsLoader, JspLoader} from "./loaders.js";
+import {load, mount} from "./mount.js";
+import {JSP} from "./parser/jsp.js";
+import {Store} from "./store.js";
+import {addTagLib, prepareTag} from "./taglib.js";
 
 export class App implements NSP.App {
     protected loaders: NSP.LoaderFn[] = [];
@@ -93,17 +92,17 @@ export class App implements NSP.App {
         return loader.load<T>(file);
     }
 
-    store<P>(context: any, key: string): StackStore<P> {
+    store<P>(context: any, key: string): NSP.StackStore<P> {
         if ("object" !== typeof context && context == null) {
             throw new Error("Context must be an object");
         }
 
         const {storeKey} = this.options;
-        const map = (context[storeKey] ??= new Map()) as Map<string, StackStore<any>>;
+        const map = (context[storeKey] ??= new Map()) as Map<string, Store<any>>;
 
-        let value: StackStore<P> = map.get(key);
+        let value: Store<P> = map.get(key);
         if (value == null) {
-            value = new StackStore<P>();
+            value = new Store<P>();
             map.set(key, value);
         }
         return value;
