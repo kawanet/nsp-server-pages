@@ -172,7 +172,7 @@ export declare namespace NSP {
     }
 
     interface TagClass {
-        render(): string | Promise<string>
+        render(): string | Promise<string> | void | Promise<void>;
     }
 
     interface StackStore<P> {

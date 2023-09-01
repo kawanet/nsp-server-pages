@@ -8,7 +8,8 @@ const isTagCon = (v: any): v is NSP.TagCon<any> => ("function" === typeof (v as 
 const tagConToTagFn = <A, T>(Tag: NSP.TagCon<A, T>): NSP.TagFn<A, T> => {
     return (tag) => {
         return (context) => {
-            return new Tag(tag, context).render();
+            const result = new Tag(tag, context).render();
+            if (result) return result as (string | Promise<string>);
         };
     };
 };

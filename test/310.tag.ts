@@ -74,4 +74,31 @@ describe(TITLE, () => {
     it("throws", () => {
         assert.throws(() => nsp.addTagLib({ns: "test", tag: {invalid: [] as any}}));
     });
+
+    it("VoidFn", async () => {
+        nsp.addTagLib({
+            ns: "void",
+            tag: {
+                syncFn: (_) => (_): void => {
+                    // void
+                },
+                asyncFn: (_) => async (_) => {
+                    // Promise<void>
+                },
+                syncClass: class {
+                    render() {
+                        // void
+                    }
+                },
+                asyncClass: class {
+                    async render() {
+                        // Promise<void>
+                    }
+                },
+            },
+        });
+
+        const src: string = `[<void:syncFn/>][<void:asyncFn/>][<void:syncClass/>][<void:asyncClass/>]`;
+        assert.equal(await nsp.parse(src).toFn()(ctx), `[][][][]`);
+    });
 });
