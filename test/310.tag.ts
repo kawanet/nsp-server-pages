@@ -70,4 +70,8 @@ describe(TITLE, () => {
         assert.equal(await nsp.parse(`<test:na>FOO</test:na>`).toFn()(ctx), `<test:na>FOO</test:na>`);
         assert.equal(await nsp.parse(`<test:na><test:na/></test:na>`).toFn()(ctx), `<test:na><test:na/></test:na>`);
     });
+
+    it("throws", () => {
+        assert.throws(() => nsp.addTagLib({ns: "test", tag: {invalid: [] as any}}));
+    });
 });

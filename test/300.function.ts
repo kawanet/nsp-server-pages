@@ -63,4 +63,8 @@ describe(TITLE, () => {
 
         assert.equal(nsp.parse('[${test:upper(bar)}]').toFn()(context), "[BAR]");
     });
+
+    it("throws", () => {
+        assert.throws(() => nsp.addTagLib({ns: "test", fn: {invalid: [] as any}}));
+    });
 });

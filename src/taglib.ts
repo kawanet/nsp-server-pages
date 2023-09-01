@@ -23,6 +23,8 @@ export function addTagLib(this: App, tagLibDef: NSP.TagLibDef): void {
             if (typeof impl === "function") {
                 // FnFn is called with App instance as this
                 fnMap.set(`${ns}:${name}`, impl.bind(this));
+            } else if (impl != null) {
+                throw new Error(`Invalid taglib implementation: \${${ns}:${name}()}`);
             }
         }
     }
@@ -36,6 +38,8 @@ export function addTagLib(this: App, tagLibDef: NSP.TagLibDef): void {
             } else if (typeof impl === "function") {
                 // NSP.TagFn
                 tagMap.set(`${ns}:${name}`, impl);
+            } else if (impl != null) {
+                throw new Error(`Invalid taglib implementation: <${ns}:${name}>`);
             }
         }
     }
