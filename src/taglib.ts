@@ -13,14 +13,6 @@ const tagConToTagFn = <A, T>(Tag: NSP.TagCon<A, T>): NSP.TagFn<A, T> => {
     };
 };
 
-type FnFn = (...args: any[]) => any;
-
-const bindApp = (app: NSP.App, fn: FnFn): FnFn => {
-    return function () {
-        return fn.apply(app, arguments);
-    }
-};
-
 export function addTagLib(this: App, tagLibDef: NSP.TagLibDef): void {
     const {fnMap, tagMap} = this;
     const {ns, fn, tag} = tagLibDef;
@@ -30,7 +22,7 @@ export function addTagLib(this: App, tagLibDef: NSP.TagLibDef): void {
             const impl = fn[name];
             if (typeof impl === "function") {
                 // FnFn is called with App instance as this
-                fnMap.set(`${ns}:${name}`, bindApp(this, impl));
+                fnMap.set(`${ns}:${name}`, impl.bind(this));
             }
         }
     }
