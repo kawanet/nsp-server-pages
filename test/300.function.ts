@@ -64,7 +64,11 @@ describe(TITLE, () => {
         assert.equal(nsp.parse('[${test:upper(bar)}]').toFn()(context), "[BAR]");
     });
 
-    it("throws", () => {
+    it("unregistered function call", async () => {
+        assert.throws(() => nsp.parse('${test:unregistered()}').toFn()(ctx));
+    });
+
+    it("invalid function registration", () => {
         assert.throws(() => nsp.addTagLib({ns: "test", fn: {invalid: [] as any}}));
     });
 });
