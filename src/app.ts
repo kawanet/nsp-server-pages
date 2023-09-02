@@ -92,7 +92,7 @@ export class App implements NSP.App {
     }
 
     store<P>(context: any, key: string): NSP.StackStore<P> {
-        if ("object" !== typeof context && context == null) {
+        if ("object" !== typeof context || context == null) {
             throw new Error("Context must be an object");
         }
 
