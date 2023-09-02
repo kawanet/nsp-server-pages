@@ -62,7 +62,7 @@ export const jspToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): stri
             // close-tag
             if (tag.isClose()) {
                 const closed = tree.close();
-                if (!closed) {
+                if (!closed?.tagName) {
                     throw new Error(`invalid closing tag: </${tag.tagName}>`);
                 }
 
