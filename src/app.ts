@@ -9,6 +9,7 @@ import {Store} from "./store.js";
 import {addTagLib, prepareTag} from "./taglib.js";
 
 export class App implements NSP.App {
+    options: NSP.Options;
     protected loaders: NSP.LoaderFn[] = [];
     protected tagMap = new Map<string, NSP.TagFn<any>>();
     protected fnMap = new Map<string, (...args: any[]) => any>();
@@ -16,8 +17,6 @@ export class App implements NSP.App {
     protected jsLoader: JsLoader;
     protected jspLoader: JspLoader;
     protected fileLoader: FileLoader;
-
-    options: NSP.Options;
 
     constructor(options?: NSP.Options) {
         this.options = options = Object.create(options || null);

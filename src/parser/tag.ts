@@ -126,7 +126,7 @@ export class Tag implements NSP.Transpiler {
         const nextOption = {SP, LF: (body ? nextLF : LF)};
 
         const type = `parse.tag.${tagName}`;
-        const def: NSP.TagParserDef<any> = {app, name: tagName, attr, body, LF: LF, nextLF};
+        const def: NSP.TagParserDef<any> = {app, name: tagName, attr, body, LF, nextLF};
 
         const tagJS = app.process<string>(type, def) ?? this.getTagJS(def, nextOption);
 
