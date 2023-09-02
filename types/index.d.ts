@@ -19,7 +19,7 @@ export declare namespace NSP {
 
     type TagFn<A, T = any> = (tag: TagDef<A, T>) => (NodeFn<T> | VoidFn<T>);
 
-    type TagCon<A, T = any> = { new(tag: NSP.TagDef<A>, context: T): TagClass };
+    type TagCon<A, T = any, P extends TagClass = TagClass> = { new(tag: NSP.TagDef<A>, context: T): P, prototype: P };
 
     type LoaderFn = (path: string) => Promise<NodeFn<any> | undefined>;
 
