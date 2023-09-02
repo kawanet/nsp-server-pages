@@ -50,6 +50,7 @@ export const jspToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): stri
     const root = new Tag(app);
     const tree = new Store<Tag>(root);
     const array = src.split(tagRegExp);
+    const {vName} = app.options;
 
     for (let i = 0; i < array.length; i++) {
         const i3 = i % 3;
@@ -82,7 +83,12 @@ export const jspToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): stri
 
             // <% scriptlet %>
             const item = new Scriptlet(app, str);
-            tree.get().append(item);
+            const toJS = (option: NSP.ToJSOption) => {
+                const js = item.toJS(option);
+                if (/^\/\//.test(js)) return js; // comment
+                return `${vName} => ${js}`; // array function
+            };
+            tree.get().append({toJS});
 
         } else if (i3 === 0) {
             // text node

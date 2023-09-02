@@ -46,7 +46,7 @@ export class Text implements NSP.Transpiler {
 const textToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): string => {
     const array = src.split(bodyRegExp);
 
-    const items: (string | { toJS: (option?: NSP.ToJSOption) => string })[] = [];
+    const items: (string | NSP.Transpiler)[] = [];
 
     for (let i = 0; i < array.length; i++) {
         const i3 = i % 3;
@@ -63,7 +63,11 @@ const textToJS = (app: NSP.App, src: string, option: NSP.ToJSOption): string => 
 
             const item = new EL(app, value);
             if (isAsync) {
-                items.push({toJS: (option) => `await ${item.toJS(option)}`});
+                const toJS = (option: NSP.ToJSOption) => {
+                    const js = item.toJS(option);
+                    return `await ${js}`;
+                };
+                items.push({toJS});
             } else {
                 items.push(item);
             }
