@@ -4,6 +4,7 @@
 *~
 .DS_Store
 .Thumbs
+.nyc_output
 ._*
 /.idea/*.iml
 /.idea/*.xml

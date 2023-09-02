@@ -34,6 +34,8 @@ describe(TITLE, () => {
         assert.equal(await nsp.concat(Promise.resolve("foo"), "bar"), "foobar", "#4");
 
         assert.equal(await nsp.concat("foo", null, Promise.resolve("buz")), "foobuz", "#5");
+
+        assert.equal(await nsp.concat(Promise.resolve("foo"), null, Promise.resolve("bar")), "foobar", "#6");
     });
 
     it("async flex", async () => {

@@ -15,6 +15,7 @@
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.5.8",
     "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
     "typescript": "^5.2.2"
   },
   "exports": {
@@ -49,6 +50,7 @@
   },
   "scripts": {
     "build": "make all",
+    "coverage": "npx tsc -p tsconfig-cjs.json && npx nyc npx mocha cjs/test",
     "fixpack": "fixpack",
     "prepack": "make clean test-title all test",
     "test": "make test"
