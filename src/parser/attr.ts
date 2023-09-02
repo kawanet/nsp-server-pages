@@ -70,11 +70,12 @@ export class Attr implements NSP.AttrParser<any> {
 
         const keys = this.keys();
         const items: string[] = keys.map(key => {
+            const value = this.get(key);
+
             if (!isSafeKey(key)) {
                 key = JSON.stringify(key);
             }
 
-            const value = this.get(key);
             return `${key}: ${value}`;
         });
 
