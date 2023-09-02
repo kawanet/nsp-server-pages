@@ -10,9 +10,11 @@ describe(TITLE, () => {
 
     // <%-- comment --%>
     it("comment", () => {
-        // nsp.on("comment", () => "comment");
-
+        // string - comment - string
         assert.equal(nsp.parse(`[<%-- comment --%>]`).toFn()(v), "[]");
+
+        // comment - string - comment
+        assert.equal(nsp.parse(`<%-- comment1 --%>[]<%-- comment2 --%>`).toFn()(v), "[]");
     });
 
     // <%! declaration(s) %>
@@ -43,6 +45,11 @@ describe(TITLE, () => {
         nsp.hook("expression", () => "expression removed");
 
         assert.equal(nsp.parse(`[<%= expression2 %>]`).toFn()(v), "[expression removed]");
+
+        // expression inside attribute
+        assert.equal(nsp.parse(`<test:tag attr="[<%= expression3 %>]"/>`).toFn()(v), '<test:tag attr="[expression removed]"/>');
+
+        assert.equal(nsp.parse(`[<test:tag attr="<%= expression4 %>"/>]`).toFn()(v), '[<test:tag attr="expression removed"/>]');
     });
 
     // <% scriptlet %>

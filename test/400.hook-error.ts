@@ -71,10 +71,10 @@ describe(TITLE, () => {
     });
 
     it("NormalErrorTagAsync", async () => {
-        assert.doesNotReject(async () => nsp.parse('<test:NormalErrorTagAsync/>').toFn()({}));
+        await assert.doesNotReject(async () => nsp.parse('<test:NormalErrorTagAsync/>').toFn()({}));
     });
 
     it("SyntaxErrorTagAsync", async () => {
-        assert.rejects(async () => nsp.parse('<test:SyntaxErrorTagAsync/>').toFn()({}));
+        await assert.rejects(async () => nsp.parse('<test:SyntaxErrorTagAsync/>').toFn()({}));
     });
 });

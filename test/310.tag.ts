@@ -64,6 +64,17 @@ describe(TITLE, () => {
         assert.equal(await nsp.parse(`[<test:body><test:body>FOO</test:body></test:body>]`).toFn()(ctx), "[FOO]");
     });
 
+    it("unbalanced", async () => {
+        // Error: invalid closing tag: </test:open>
+        assert.throws(() => nsp.parse(`[<test:open>]`).toFn(), "#1");
+
+        // Error: invalid closing tag: </test:close>
+        assert.throws(() => nsp.parse(`[</test:close>]`).toFn(), "#2");
+
+        // Error: invalid closing tag: <test:open></test:close>
+        assert.throws(() => nsp.parse(`[<test:open></test:close>]`).toFn(), "#3");
+    });
+
     it("unregistered tag", async () => {
         assert.equal(await nsp.parse(`<test:na/>`).toFn()(ctx), `<test:na/>`);
         assert.equal(await nsp.parse(`<test:na></test:na>`).toFn()(ctx), `<test:na></test:na>`);

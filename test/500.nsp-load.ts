@@ -49,6 +49,12 @@ describe(TITLE, () => {
     });
 
     it("not found", async () => {
-        assert.rejects(() => nsp.load("/not/found/"));
+        await assert.rejects(() => nsp.load("/not/found/"));
+    });
+
+    it("ignore invalid files", async () => {
+        assert.equal(await nsp.loadJS("/invalid.jpg") ?? null, null);
+        assert.equal(await nsp.loadJSP("/invalid.jpg") ?? null, null);
+        assert.equal(await nsp.loadFile("/invalid.jpg") ?? null, null);
     });
 });

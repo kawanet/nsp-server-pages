@@ -49,7 +49,7 @@ export class Scriptlet implements NSP.Transpiler {
 
         src = /`|\$\{/.test(src) ? JSON.stringify(src) : "`" + src + "`";
 
-        src = `${vName} => ${nspName}.process("${type}", ${src}, ${vName})`;
+        src = `${nspName}.process("${type}", ${src}, ${vName})`;
 
         return src;
     }
