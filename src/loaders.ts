@@ -91,7 +91,7 @@ export class JsLoader extends BaseLoader {
         file = file?.replace(/\.jsp$/, ".js");
 
         // valid only for .js files
-        if (!/\.[cm]?js$/.test(file)) return;
+        if (!/\.(cjs|js|mjs|ts)$/.test(file)) return;
 
         // skip when file does not exist
         if (!await this.isFile(file)) return;
@@ -119,7 +119,7 @@ export class FileLoader extends BaseLoader {
 
     async load<T>(file: string): Promise<NSP.NodeFn<T>> {
         // disabled for JSP, JS and image files
-        if (/\.(jsp|[cm]?js|png|gif|jpe?g)$/i.test(file)) return;
+        if (/\.(jsp|cjs|js|mjs|ts|png|gif|jpe?g)$/i.test(file)) return;
 
         // skip when file does not exist
         if (!await this.isFile(file)) return;
