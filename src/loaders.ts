@@ -41,7 +41,7 @@ export class JspLoader extends BaseLoader {
         timeout: 1000,
     })(async <T>(path: string): Promise<NSP.NodeFn<T>> => {
         const app = this.appRef.deref();
-        app.log(`loading: ${path}`);
+        app.log(`loading JSP: ${path}`);
         const text = await fs.readFile(path, "utf8");
         return app.parse(text).toFn<T>();
     });
@@ -70,7 +70,7 @@ export class JsLoader extends BaseLoader {
     })(async <T>(file: string): Promise<NSP.NodeFn<T>> => {
         const app = this.appRef.deref();
 
-        app.log(`loading: ${file}`);
+        app.log(`loading JS: ${file}`);
         const module = await import(file);
         const name = getName(file);
 
@@ -90,7 +90,7 @@ export class JsLoader extends BaseLoader {
     async load<T>(file: string): Promise<NSP.NodeFn<T>> {
         file = file?.replace(/\.jsp$/, ".js");
 
-        // valid only for .js files
+        // valid only for .js-like files
         if (!/\.(cjs|js|mjs|ts)$/.test(file)) return;
 
         // skip when file does not exist
@@ -118,8 +118,8 @@ export class FileLoader extends BaseLoader {
     });
 
     async load<T>(file: string): Promise<NSP.NodeFn<T>> {
-        // disabled for JSP, JS and image files
-        if (/\.(jsp|cjs|js|mjs|ts|png|gif|jpe?g)$/i.test(file)) return;
+        // disabled for JSP, JS, TS and image files
+        if (/\.(jsp|cjs|js|mjs|ts|png|gif|jpe?g|webp)$/i.test(file)) return;
 
         // skip when file does not exist
         if (!await this.isFile(file)) return;
