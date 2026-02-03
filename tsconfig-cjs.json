@@ -23,6 +23,10 @@
     "resolvePackageJsonExports": false,
     "skipLibCheck": false,
     "strictNullChecks": false,
-    "target": "ES2021"
+    "target": "ES2021",
+    "lib": [
+      "ES2021",
+      "ES2022.Array"
+    ]
   }
 }
